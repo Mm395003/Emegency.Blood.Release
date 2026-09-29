@@ -1,0 +1,633 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compatibility Tag | Blood Bank</title>
+<style>
+:root{
+  --maroon:#8e0e15;--maroon-dark:#6d0a10;--maroon-light:#b5121b;
+  --ink:#1c2024;--muted:#5c636b;--line:#d8dbdf;--bg:#eef0f2;--card:#fff;
+  --ok-bg:#eefaf1;--ok-line:#2f8f52;--ok-ink:#1c6b39;
+  --err-bg:#fdedee;--err-line:#c23440;--err-ink:#9c1f29;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+
+.header{height:68px;background:linear-gradient(120deg,var(--maroon-light),var(--maroon-dark));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.header .brand{display:flex;flex-direction:column;line-height:1.15}
+.header h1{margin:0;font-size:20px;font-weight:800;letter-spacing:.3px}
+.header .sub{font-size:12px;opacity:.85;letter-spacing:.4px}
+.header .org{font-size:12px;opacity:.9;text-align:right}
+
+.nav{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.nav button{flex:1;border:0;background:transparent;padding:14px 8px;color:var(--muted);font-weight:700;font-size:13.5px;cursor:pointer;position:relative;transition:color .15s}
+.nav button:hover{color:var(--maroon)}
+.nav button.active{color:var(--maroon)}
+.nav button.active:after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--maroon);border-radius:3px 3px 0 0}
+
+main{max-width:1100px;margin:22px auto;padding:0 16px 40px}
+.page{display:none}.page.active{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:0 2px 10px rgba(20,20,30,.05)}
+.card h2{margin:0;padding:14px 18px;background:#f7f7f8;border-bottom:1px solid var(--line);font-size:14px;letter-spacing:.3px;color:#333;text-transform:uppercase}
+.body{padding:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.full{grid-column:1/-1}
+
+label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:#42484f}
+input,select{width:100%;height:42px;padding:9px 12px;border:1.5px solid var(--line);border-radius:9px;background:#fff;font:14px "Segoe UI",sans-serif;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:none;border-color:var(--maroon-light);box-shadow:0 0 0 3px rgba(181,18,27,.12)}
+.scan{display:flex;gap:8px}
+.scan button{min-width:84px;white-space:nowrap}
+
+button{border:0;border-radius:9px;padding:11px 16px;background:var(--maroon-light);color:#fff;font-weight:700;font-size:13.5px;cursor:pointer;transition:filter .15s,transform .05s}
+button:hover{filter:brightness(1.08)}
+button:active{transform:translateY(1px)}
+.secondary{background:#6a7078}
+.printbtn{background:#1a7a41}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+
+.message{padding:12px;border-radius:10px;text-align:center;background:var(--ok-bg);border:1.5px solid var(--ok-line);color:var(--ok-ink);font-weight:700;font-size:13px;letter-spacing:.2px}
+.message.error{background:var(--err-bg);border-color:var(--err-line);color:var(--err-ink)}
+
+.preview{padding:30px;background:repeating-linear-gradient(45deg,#e6e8ea,#e6e8ea 10px,#e1e3e5 10px,#e1e3e5 20px);display:flex;justify-content:center;overflow:auto}
+.preview .tag{box-shadow:0 8px 24px rgba(0,0,0,.18)}
+
+table.hist{width:100%;border-collapse:collapse;font-size:13px}
+table.hist th,table.hist td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
+table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.3px}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.stat{background:#f7f7f8;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+.stat b{display:block;font-size:26px;color:var(--maroon);margin-top:4px}
+.stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+
+@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.stat-row{grid-template-columns:1fr}}
+
+/* ===================================================================
+   PRINT TAG — flat rectangular label, 2.71in x 5.13in
+   (matches the physical size of Form-BB-029 "Compatibility Tag" table
+    in the reference Word document)
+   =================================================================== */
+.tag{
+  width:2.71in;height:5.13in;
+  background:#fff;color:#111;
+  border:1.4px solid #111;border-radius:6px;
+  font-family:"Times New Roman",Times,Georgia,serif;
+  overflow:hidden;position:relative;
+  display:flex;flex-direction:column;
+}
+.tag .t-org{height:.18in;display:flex;align-items:center;justify-content:center;font-size:5.8pt;font-weight:700;letter-spacing:.6px;color:#444;border-bottom:.7px solid #999}
+.tag .t-header{height:.44in;display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1.4px solid #111;background:#faf7f7}
+.tag .t-header .t1{font-size:14.5pt;font-weight:700;letter-spacing:.3px;color:#000;line-height:1.1}
+.tag .t-header .t2{font-size:7pt;font-weight:700;letter-spacing:3.5px;color:#333;margin-top:1px;line-height:1.1}
+
+/* single-value rows: only the chosen option is printed, plain and legible,
+   instead of a checkbox list of every possible option */
+.t-line{height:.24in;display:flex;align-items:center;gap:.06in;padding:0 .09in;border-bottom:1px solid #777;font-size:6.9pt;font-weight:700;white-space:nowrap;overflow:hidden}
+.t-line .t-label{flex:none;line-height:1.1;font-style:italic}
+.t-line .t-value{font-size:9.5pt;font-weight:900;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
+
+.t-field{display:flex;flex-direction:column;justify-content:center;padding:.035in .09in;border-bottom:1px solid #777;overflow:hidden}
+.t-field .t-label{font-size:6.7pt;font-weight:700;color:#333;line-height:1.15;flex:none;font-style:italic}
+.t-field .t-value{font-size:10.1pt;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;line-height:1.15;flex:none}
+.t-name{height:.56in}
+.t-name .t-label{font-size:6.4pt}
+.t-name .t-value{font-size:11pt;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.16;margin-top:2px}
+.t-filenum{height:.39in}
+.t-unit{height:.39in}
+.t-expiry{height:.39in}
+.t-compat{height:.38in}
+.t-compat .t-value{font-size:10.4pt}
+
+.t-bg-head{height:.22in;display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #777;background:#f2f2f2}
+.t-bg-head div{display:flex;align-items:center;justify-content:center;font-size:6.3pt;font-weight:800;letter-spacing:.2px}
+.t-bg-head div:first-child{border-right:1px solid #777}
+.t-bg-values{height:.60in;display:grid;grid-template-columns:1fr 1fr;border-bottom:1.2px solid #111}
+.t-bg-values div{display:flex;align-items:center;justify-content:center;font-size:15pt;font-weight:900;line-height:1.1}
+.t-bg-values div:first-child{border-right:1px solid #777}
+
+.t-sigdate{height:.45in;display:grid;grid-template-columns:1fr 1fr;border-bottom:1.2px solid #111}
+.t-sigdate div{padding:.035in .08in;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.t-sigdate div:first-child{border-right:1px solid #777}
+.t-sigdate .t-label{font-size:6.3pt;font-weight:700;color:#333;line-height:1.15;flex:none;font-style:italic}
+.t-sigdate .t-value{font-size:8.7pt;font-weight:800;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15;flex:none}
+
+.t-verify{flex:none;height:.42in;display:flex;align-items:center;justify-content:center;text-align:center;font-size:6.4pt;line-height:1.22;font-weight:600;padding:.03in .12in;border-bottom:.7px solid #999;color:#222}
+
+.t-footer{height:.23in;display:flex;align-items:center;justify-content:center;gap:.08in;font-size:5.6pt;color:#555;font-weight:700;letter-spacing:.2px;margin-top:auto}
+
+
+/* V27 preview sizing — visually match the enlarged bitmap tag */
+.tag .t-org{height:.17in;font-size:6.5pt}
+.tag .t-header{height:.49in}
+.tag .t-header .t1{font-size:16pt}.tag .t-header .t2{font-size:7.5pt}
+.t-line{height:.29in;font-size:9pt}.t-line .t-value{font-size:12.5pt}
+.t-field{padding:.045in .09in}.t-field .t-label{font-size:8.2pt}.t-field .t-value{font-size:13pt}
+.t-name{height:.62in}.t-name .t-label{font-size:8pt}.t-name .t-value{font-size:15pt}
+.t-filenum{height:.47in}.t-unit{height:.47in}.t-expiry{height:.45in}.t-compat{height:.45in}.t-compat .t-value{font-size:13.5pt}
+.t-bg-head{height:.25in}.t-bg-head div{font-size:8pt}.t-bg-values{height:.70in}.t-bg-values div{font-size:19pt}
+.t-sigdate{height:.53in}.t-sigdate .t-label{font-size:7pt}.t-sigdate .t-value{font-size:9.5pt}
+.t-verify{height:.54in;font-size:7pt;line-height:1.25;padding:.04in .1in}
+@media print{
+  @page{size:2.71in 5.13in;margin:0}
+  html,body{width:2.71in;height:5.13in;margin:0;padding:0;background:#fff!important}
+  .header,.nav,.no-print,.page:not(#tagPage){display:none!important}
+  main{width:2.71in;margin:0;padding:0}
+  .page#tagPage{display:block!important}
+  .card,.body{margin:0;padding:0;border:0;box-shadow:none}
+  .preview{padding:0;background:#fff!important}
+  .tag{border:0;border-radius:0;box-shadow:none!important}
+  .tag *{color:#000!important}
+}
+
+.issue-report{background:#fff;color:#111;border:1px solid #222;padding:24px;font-family:"Times New Roman",Times,serif;max-width:980px;margin:auto}
+.ir-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #111;padding-bottom:14px;margin-bottom:18px}.ir-title{font-size:24px;font-weight:900;letter-spacing:.8px}.ir-subtitle{font-size:18px;font-weight:800;margin-top:4px;letter-spacing:1px}.ir-org{font-size:12px;font-weight:800;text-align:right}
+.ir-patient{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #555;margin-bottom:16px}.ir-patient>div{padding:10px 12px;border-bottom:1px solid #777}.ir-patient>div:nth-child(odd){border-right:1px solid #777}.ir-patient>div:nth-last-child(-n+2){border-bottom:0}.ir-patient span,.ir-summary span{display:block;font-size:11px;font-weight:700;color:#444;text-transform:uppercase}.ir-patient b{display:block;font-size:16px;margin-top:3px}
+.ir-summary{display:grid;grid-template-columns:1fr 2fr;border:1px solid #555;margin-bottom:16px}.ir-summary>div{padding:10px 12px}.ir-summary>div:first-child{border-right:1px solid #777}.ir-summary b{display:block;font-size:17px;margin-top:3px}
+.issue-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:22px}.issue-table th{background:#222;color:#fff;padding:8px 6px;border:1px solid #222}.issue-table td{padding:8px 6px;border:1px solid #555;text-align:center}
+.ir-signatures{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px}.signature-box{border:1px solid #555;padding:12px;min-height:150px}.signature-box strong{font-size:14px}.sig-line{border-bottom:1px solid #111;height:34px;margin-bottom:10px}.sig-label{font-size:11px;margin:7px 0}.ir-note{border-top:1px solid #777;margin-top:18px;padding-top:10px;font-size:10px;line-height:1.3;text-align:center}
+@media print{ @page{size:A4 portrait;margin:10mm} body{background:#fff!important}.header,.nav,.no-print,.page:not(#issueReport){display:none!important}main{width:auto;max-width:none;margin:0;padding:0}#issueReport{display:block!important}#issueReport .card{border:0;margin:0;box-shadow:none}#issueReport .body{padding:0}.issue-report{border:0;max-width:none;padding:0}}
+
+/* V3 Issue Report layout and reliable A4 portrait printing */
+.issue-report{box-sizing:border-box;width:194mm;min-height:281mm;margin:auto;padding:9mm;background:#fff;color:#111;font-family:"Times New Roman",Times,serif}
+.issue-report .ir-header{padding-bottom:12px;margin-bottom:14px;border-bottom-width:3px}
+.issue-report .ir-title{font-size:30px;line-height:1.05}.issue-report .ir-subtitle{font-size:22px;line-height:1.1;margin-top:5px}.issue-report .ir-org{font-size:12px}
+.issue-report .ir-patient{margin-bottom:14px}.issue-report .ir-patient>div{padding:10px 12px;min-height:19mm;box-sizing:border-box}
+.issue-report .ir-patient span,.issue-report .ir-summary span{font-size:12px;font-weight:700;display:block;margin-bottom:4px}.issue-report .ir-patient b{font-size:20px;line-height:1.1}
+.issue-report .ir-summary{margin-bottom:14px}.issue-report .ir-summary>div{padding:10px 12px;min-height:20mm}.issue-report .ir-summary b{font-size:21px;line-height:1.1}
+.issue-report .issue-table{font-size:13px;margin-bottom:16px}.issue-report .issue-table th{padding:9px 5px;font-size:13px}.issue-report .issue-table td{padding:10px 5px;font-size:13px}
+.issue-report .ir-signatures{gap:14px;margin-top:12px}.issue-report .signature-box{min-height:40mm;padding:12px}.issue-report .signature-box strong{font-size:18px}.issue-report .sig-line{height:28px;margin-bottom:9px}.issue-report .sig-label{font-size:12px;margin:7px 0}
+.issue-report .ir-note{margin-top:14px;padding-top:9px;font-size:11px;line-height:1.25}
+
+/* V21 — Emergency Release Issue Report option */
+.issue-report .ir-emergency{display:none;margin-top:14px;border:2px solid #111;padding:12px 14px;font-size:12px;line-height:1.35;font-weight:700;text-align:left}
+.issue-report.emergency-mode .ir-emergency{display:block}
+.issue-report .ir-emergency-title{font-size:14px;font-weight:900;text-transform:uppercase;margin-bottom:7px}
+@media print{.issue-report.emergency-mode .ir-emergency{display:block!important}}
+
+
+
+
+
+/* V7 PRINT CENTER: isolated output modes */
+@media print{
+  html,body{margin:0!important;padding:0!important;background:#fff!important}
+
+  /* Tag: exact stock size */
+  body.print-tag .page{display:none!important}
+  body.print-tag #tagPage{page:tagPage;
+    display:block!important;
+    width:2.71in!important;height:5.13in!important;
+    margin:0!important;padding:0!important;
+    page-break-after:avoid!important;
+  }
+  body.print-tag #tagPage .actions,
+  body.print-tag #tagPage .no-print{display:none!important}
+  body.print-tag #tagPage .card,
+  body.print-tag #tagPage .body,
+  body.print-tag #tagPage .preview{
+    display:block!important;width:2.71in!important;height:5.13in!important;
+    margin:0!important;padding:0!important;border:0!important;
+    box-shadow:none!important;background:#fff!important;overflow:hidden!important;
+  }
+  body.print-tag #tagPrint{
+    display:flex!important;width:2.71in!important;height:5.13in!important;
+    margin:0!important;padding:0!important;box-sizing:border-box!important;
+    border:1px solid #111!important;border-radius:0!important;box-shadow:none!important;
+  }
+
+  /* Issue Report: full A4 portrait */
+  body.print-issue .page{display:none!important}
+  body.print-issue #issueReport{page:issuePage;
+    display:block!important;width:198mm!important;min-height:285mm!important;
+    margin:0!important;padding:0!important;position:static!important;
+    page-break-after:avoid!important;background:#fff!important;
+  }
+  body.print-issue #issueReport .actions,
+  body.print-issue #issueReport .no-print{display:none!important}
+  body.print-issue #issueReport .card{
+    display:block!important;border:0!important;box-shadow:none!important;
+    margin:0!important;padding:0!important;
+  }
+  body.print-issue #issueReport .body{display:block!important;padding:0!important}
+  body.print-issue #issuePrint{
+    display:block!important;width:198mm!important;min-height:285mm!important;
+    max-width:none!important;box-sizing:border-box!important;
+    margin:0!important;padding:10mm!important;
+    border:1px solid #222!important;overflow:hidden!important;
+  }
+}
+@page tagPage {size:2.71in 5.13in;margin:0}
+@page issuePage {size:A4 portrait;margin:6mm}
+
+.workflow{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 18px;max-width:900px;color:#777;font-size:12px}.wf{border:1px solid #bbb;border-radius:10px;padding:6px 12px;text-align:center;min-width:74px;background:#fff}.wf.active{border-color:#8e0e15;color:#8e0e15;font-weight:800}.wf span{font-size:10px}.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.ir-request{display:grid;grid-template-columns:1fr 1fr;border:1px solid #555;margin-bottom:14px}.ir-request>div{padding:8px 10px;border-bottom:1px solid #777}.ir-request>div:nth-child(odd){border-right:1px solid #777}.ir-request span{display:block;font-size:10px;font-weight:700;color:#444;text-transform:uppercase}.ir-request b{font-size:14px}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
+@media(max-width:800px){.dash-grid{grid-template-columns:1fr}.workflow{overflow:auto;justify-content:flex-start}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="brand"><h1>Emergency Blood Release Protocol</h1><span class="sub">Blood Bank &middot; Laboratory Department</span></div>
+  <div class="org">Dr Sulaiman Al Habib Medical Group</div>
+</div>
+<div class="nav">
+  <button class="active" onclick="show('new',this)">New Tag</button>
+  <button onclick="show('tagPage',this)">Tag Preview</button>
+  <button onclick="show('history',this)">History</button><button onclick="show('audit',this)">Audit Trail</button><button onclick="show('issueReport',this)">Issue Report</button>
+  <button onclick="show('dashboard',this)">Dashboard</button>
+</div>
+<main>
+
+
+<section id="printCenter" class="page">
+<div class="card"><div class="body">
+<h2 style="margin-top:0">Print Center</h2>
+<p style="color:#666;font-size:13px">Choose the document. The website fixes the paper size and layout for that document.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+<div style="border:1.5px solid #8e0e15;border-radius:12px;padding:18px">
+<h3 style="color:#8e0e15;margin-top:0">Compatibility Tag</h3>
+<p style="font-size:12px;color:#666">Paper: <b>2.71 × 5.13 in</b><br>Printer: <b>Zebra GK420t</b><br>Scale: <b>100%</b></p>
+<button onclick="printTagFromCenter()">Print Tag — Direct Zebra</button>
+</div>
+<div style="border:1.5px solid #444;border-radius:12px;padding:18px">
+<h3 style="margin-top:0">Blood Issue Report</h3>
+<p style="font-size:12px;color:#666">Paper: <b>A4 Portrait</b><br>Printer: <b>A4 Printer</b><br>Scale: <b>100%</b></p>
+<button onclick="printIssueFromCenter(false)">Print Routine Issue Report</button><button class="secondary" onclick="printIssueFromCenter(true)">Print Emergency Release Report</button>
+</div>
+</div>
+<div class="alert warn" style="margin-top:16px"><b>Direct Zebra mode:</b> Compatibility Tags are sent to <b>ZDesigner GK420t</b> through the Windows Print Agent. No browser print dialog is used. Issue Reports remain normal A4 printing.</div>
+<div id="zebraStatus" class="message no-print" style="margin-top:10px">Checking Zebra Print Agent…</div>
+</div></div>
+</section>
+
+<section id="new" class="page active">
+  <div class="card"><h2>Patient Information</h2><div class="body grid">
+    <div class="full"><label>Patient File Number</label><div class="scan"><input id="file" value="UNKNOWN" placeholder="Enter or scan patient file number"><button onclick="focusId('file')">SCAN</button></div></div>
+    <div><label>Patient Name</label><input id="name" value="UNKNOWN" placeholder="Enter patient name"></div>
+    <div><label>Patient Age</label><input id="age" type="number" min="0" max="120" placeholder="Enter age"></div>
+    <div><label>Sex</label><select id="sex"><option value="UNKNOWN">Unknown</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+    <div><label>Patient Blood Group</label><select id="pg"><option>UNKNOWN</option><option>O POS</option><option>O NEG</option><option>A POS</option><option>A NEG</option><option>B POS</option><option>B NEG</option><option>AB POS</option><option>AB NEG</option></select></div>
+    <div><label>Ward / Location</label><select id="loc"><option>ER</option><option>OR</option><option>ICU</option><option>Ward</option><option>Other</option></select></div>
+    <div><label>Technologist ID *</label><input id="tech"></div>
+    <div><label>Doctor Name</label><input id="doctorName" placeholder="Enter doctor name"></div>
+    <div><label>Doctor ID</label><input id="doctorId" placeholder="Enter doctor ID"></div>
+    <div><label>Call Received Time</label><input id="callTime" type="time"></div>
+    <div><label>Release Type *</label><select id="releaseType"><option value="ROUTINE">Routine</option><option value="EMERGENCY" selected>Emergency / Urgent</option></select></div>
+    <div><label>Doctor Requested Number of Units *</label><input id="requestedUnits" type="number" min="1" max="50" value="1" oninput="renderRequestedUnits()"></div>
+    <div><label>Requested Blood Component *</label><select id="requestedComp" onchange="renderRequestedUnits()"><option value="PRBC">PRBC</option><option value="PLT">PLT</option><option value="TFFP">TFFP</option><option value="Cryo">Cryo</option></select></div>
+  </div></div>
+
+  <div class="card"><h2>Blood Units Requested by Doctor</h2><div class="body">
+    <div class="alert" style="margin-bottom:12px"><b>Requested:</b> <span id="requestSummary">1 × PRBC</span><br><span style="font-size:12px">Enter/scan the unit number for each requested unit. The number of unit fields is based on the doctor's request.</span></div>
+    <div id="requestedUnitsList"></div>
+  </div></div>
+
+<div class="card no-print"><h2>Units for This Issue</h2><div class="body">
+<div id="unitList" style="margin-bottom:12px;color:#5c636b">No units added yet.</div>
+<button onclick="addRequestedUnitsToIssue()">Add All Requested Units to Issue Report</button>
+<button class="printbtn" onclick="printAllTagsDirect()">Print All Tags — Zebra (One Print Job)</button>
+<button class="secondary" onclick="clearIssueUnits()">Clear Units</button>
+<div style="margin-top:10px;font-size:12px;color:#5c636b">The Issue Report will show the requested total and each blood unit entered. Patient name and file number default to <b>UNKNOWN</b> when not available.</div>
+</div></div>
+<div class="actions no-print"><button onclick="generate()">Generate Compatibility Tag</button><button class="secondary" onclick="clearForm()">Clear</button></div>
+  <div id="msg" class="message no-print">READY — ENTER PATIENT AND BLOOD UNIT INFORMATION</div>
+</section>
+
+<section id="tagPage" class="page">
+  <div class="no-print" style="font-size:11px;color:#666;margin-top:7px">
+<strong>Print settings:</strong> Tag → select Zebra GK420t and 2.71 × 5.13 in stock. Issue Report → select your A4 printer and A4 Portrait. Emergency Release Report adds the emergency declaration; Routine Issue Report does not.
+</div><div class="actions no-print"><button class="printbtn" onclick="printCurrentPreviewTag()">Print Current Tag — Zebra</button><button class="printbtn" onclick="printAllTagsDirect()">Print All Added Tags — One Print Job</button><button class="secondary" onclick="show('new',document.querySelector('.nav button'))">Back</button></div>
+  <div id="tagPreviewList"></div>
+</section>
+
+<section id="history" class="page">
+  <div class="card"><h2>Tag History</h2><div class="body">
+    <div class="filterbar no-print"><input id="histSearch" placeholder="Search patient, file, unit, technologist" oninput="historyView()"><select id="histType" onchange="historyView()"><option value="ALL">All Types</option><option value="ROUTINE">Routine</option><option value="EMERGENCY">Emergency</option></select><button class="secondary" onclick="exportHistoryCSV()">Export CSV</button></div>
+    <div id="historyList">No records yet.</div>
+  </div></div>
+</section>
+
+<section id="audit" class="page">
+  <div class="card"><h2>Audit Trail</h2><div class="body"><div class="filterbar no-print"><input id="auditSearch" placeholder="Search audit trail" oninput="auditView()"><button class="secondary" onclick="exportAuditCSV()">Export CSV</button></div><div id="auditList">No audit records yet.</div></div></div>
+</section>
+
+<section id="issueReport" class="page">
+<div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new',document.querySelector('.nav button'))">Back</button></div>
+<div class="card"><div class="body"><div id="issuePrint" class="issue-report">
+<div class="ir-header"><div><div class="ir-title">BLOOD BANK</div><div class="ir-subtitle">BLOOD ISSUE REPORT</div></div><div class="ir-org">DR SULAIMAN AL HABIB MEDICAL GROUP</div></div>
+<div class="ir-patient">
+<div><span>Patient Name</span><b id="ir_name">—</b></div><div><span>Patient File Number</span><b id="ir_file">—</b></div>
+<div><span>Patient Age / Sex</span><b id="ir_ageSex">—</b></div>
+<div><span>Ward / Location</span><b id="ir_loc">—</b></div><div><span>Call Received Time</span><b id="ir_call">—</b></div>
+<div><span>Doctor Name / ID</span><b id="ir_doctor">—</b></div><div><span>Date / Time</span><b id="ir_time">—</b></div>
+</div>
+
+<div class="ir-summary"><div><span>Total Units</span><b id="ir_count">0</b></div><div><span>Components</span><b id="ir_types">—</b></div></div>
+<table class="issue-table"><thead><tr><th>#</th><th>Blood Unit Number</th><th>Component</th><th>Donor Group</th><th>Expiry Date</th><th>Compatibility</th></tr></thead><tbody id="issueRows"><tr><td colspan="6" style="text-align:center">No units added.</td></tr></tbody></table>
+<div class="ir-signatures">
+<div class="signature-box"><strong>Issued By</strong><div class="sig-line"></div><div class="sig-label">Name / ID: <span id="ir_issuer">—</span></div><div class="sig-label">Signature: __________________________</div><div class="sig-label">Date / Time: _________________________</div></div>
+<div class="signature-box"><strong>Received By</strong><div class="sig-line"></div><div class="sig-label">Name / ID: __________________________</div><div class="sig-label">Signature: __________________________</div><div class="sig-label">Date / Time: _________________________</div></div>
+</div>
+<div class="ir-emergency" id="ir_emergency_statement">
+<div class="ir-emergency-title">Emergency Release Declaration</div>
+I believe that the patient's life is in jeopardy without an emergency transfusion, I release the blood bank of the responsibility for any adverse reaction resulting from this transfusion which may have been prevented by routine pretransfusion compatibility testing.
+</div>
+<div class="ir-note">This report documents the blood units prepared for issue to the identified patient. Final bedside identification and transfusion checks must follow the applicable blood bank and hospital procedure.</div>
+</div></div></div>
+</section>
+
+<section id="dashboard" class="page">
+  <div class="card"><h2>Dashboard</h2><div class="body">
+    <div class="stat-row">
+      <div class="stat"><span>Total Tags</span><b id="total">0</b></div><div class="stat"><span>Today's Tags</span><b id="today">0</b></div><div class="stat"><span>Unique Units</span><b id="units">0</b></div>
+      <div class="stat"><span>Emergency Releases</span><b id="emergencyCount">0</b></div><div class="stat"><span>Routine Releases</span><b id="routineCount">0</b></div><div class="stat"><span>Patients</span><b id="patientCount">0</b></div>
+    </div>
+    <div class="dash-grid"><div><h3>Components</h3><div id="componentStats">—</div></div><div><h3>Blood Groups</h3><div id="groupStats">—</div></div><div><h3>Sex</h3><div id="sexStats">—</div></div><div><h3>Age Groups</h3><div id="ageStats">—</div></div><div><h3>Technologists</h3><div id="techStats">—</div></div></div>
+  </div></div>
+</section>
+
+</main>
+<script>
+
+const $=id=>document.getElementById(id);
+function focusId(id){$(id).focus()}
+function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='history')historyView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView()}
+function now(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function formatExpiryDate(v){if(!v||v==='—')return v||'—';const m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)return v;const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const month=months[Number(m[2])-1];return month?`${Number(m[3])} ${month} ${m[1]}`:v;}
+const COMP_LABEL={PRBC:'PRBC',PLT:'PLT',TFFP:'TFFP',Cryo:'Cryo'};
+const STATUS_LABEL={UNCROSSMATCH:'Uncrossmatch',COMPATIBLE:'Compatible','PARTIAL COMPATIBLE':'Partial crossmatch','TYPE SPECIFIC':'Type specific','NON TYPE SPECIFIC':'Non type specific'};
+function getIssueUnits(){return JSON.parse(sessionStorage.getItem('issueUnits')||'[]')}
+function setIssueUnits(a){sessionStorage.setItem('issueUnits',JSON.stringify(a));renderUnitList();renderTagPreviews()}
+function renderRequestedUnits(){
+  const n=Math.max(1,Math.min(50,parseInt($('requestedUnits')?.value||'1',10)||1));
+  const comp=COMP_LABEL[$('requestedComp')?.value]||$('requestedComp')?.value||'PRBC';
+  if($('requestedUnits')) $('requestedUnits').value=n;
+  if($('requestSummary')) $('requestSummary').textContent=n+' × '+comp;
+  const host=$('requestedUnitsList'); if(!host)return;
+  const old=[...host.querySelectorAll('.requested-unit-row')].map(r=>({unit:r.querySelector('.req-unit')?.value||'',dg:r.querySelector('.req-dg')?.value||'O POS',exp:r.querySelector('.req-exp')?.value||'',status:r.querySelector('.req-status')?.value||'UNCROSSMATCH'}));
+  host.innerHTML=Array.from({length:n},(_,i)=>{const x=old[i]||{};return `<div class="requested-unit-row" data-index="${i}" style="border:1px solid #d8dce1;border-radius:10px;padding:12px;margin-bottom:10px;background:#fafafa"><div style="font-weight:700;margin-bottom:8px">Unit ${i+1}</div><div class="grid">
+    <div class="full"><label>Blood Unit Number *</label><div class="scan"><input class="req-unit" value="${x.unit||''}" placeholder="Enter or scan unit number"><button type="button" onclick="this.parentElement.querySelector('input').focus()">SCAN</button></div></div>
+    <div><label>Donor Blood Group</label><select class="req-dg">${['O POS','O NEG','A POS','A NEG','B POS','B NEG','AB POS','AB NEG'].map(v=>`<option ${v===(x.dg||'O POS')?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div><label>Expiry Date</label><input class="req-exp" type="date" value="${x.exp||''}"></div>
+    <div><label>Type of Compatibility *</label><select class="req-status">${['UNCROSSMATCH','COMPATIBLE','PARTIAL COMPATIBLE','TYPE SPECIFIC','NON TYPE SPECIFIC'].map(v=>`<option value="${v}" ${v===(x.status||'UNCROSSMATCH')?'selected':''}>${STATUS_LABEL[v]}</option>`).join('')}</select></div>
+    </div></div>`}).join('');
+}
+function collectRequestedUnits(){
+  const comp=COMP_LABEL[$('requestedComp').value]||$('requestedComp').value;
+  return [...document.querySelectorAll('.requested-unit-row')].map(r=>({unit:r.querySelector('.req-unit').value.trim(),comp,dg:r.querySelector('.req-dg').value,exp:r.querySelector('.req-exp').value||'—',status:STATUS_LABEL[r.querySelector('.req-status').value]||r.querySelector('.req-status').value,dt:now()}));
+}
+function addRequestedUnitsToIssue(){
+  const rows=collectRequestedUnits(); const missing=rows.map((x,i)=>!x.unit?i+1:null).filter(Boolean);
+  if(missing.length){alert('Enter or scan the Blood Unit Number for Unit '+missing.join(', Unit ')+'.');return false;}
+  const existing=getIssueUnits(); const merged=[...existing];
+  for(const item of rows){if(merged.some(x=>x.unit===item.unit)){alert('This blood unit is already added: '+item.unit);return false;} merged.push(item); saveHistoryRecord(item);}
+  setIssueUnits(merged); $('msg').className='message no-print'; $('msg').textContent='✓ '+rows.length+' UNIT(S) ADDED — READY FOR ISSUE REPORT';
+}
+function saveHistoryRecord(x){const key='ctags';let a=getHistory();const record={time:x.dt||now(),name:$('name').value.trim()||'—',file:$('file').value.trim()||'—',unit:x.unit||'—',status:x.status||'—',releaseType:$('releaseType')?.value||'ROUTINE',comp:x.comp||'—',dg:x.dg||'—',loc:$('loc').value||'—',tech:$('tech').value.trim()||'—',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN'};a.unshift(record);localStorage.setItem(key,JSON.stringify(a.slice(0,500)));addAudit('UNIT_ADDED',record);historyView();dashboardView()}
+function addAudit(action,x={}){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]');if(!Array.isArray(a))a=[]}catch(e){a=[]}a.unshift({time:now(),action,user:$('tech')?.value.trim()||'—',patient:$('name')?.value.trim()||'—',file:$('file')?.value.trim()||'—',unit:x.unit||'—',releaseType:x.releaseType||'ROUTINE',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN',details:x.details||''});localStorage.setItem('auditTrail',JSON.stringify(a.slice(0,1000)))}
+function removeIssueUnit(i){const a=getIssueUnits();a.splice(i,1);setIssueUnits(a)}
+function clearIssueUnits(){sessionStorage.removeItem('issueUnits');renderUnitList();renderTagPreviews()}
+function tagDataForUnit(x){
+  return {name:$('name').value.trim(),file:$('file').value.trim(),unit:x.unit,pg:$('pg').value,dg:x.dg,status:x.status,comp:x.comp,exp:x.exp,tech:$('tech').value.trim(),loc:$('loc').value,doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',dt:x.dt||now()};
+}
+function renderTagPreviews(){
+  const host=$('tagPreviewList'); if(!host) return;
+  const units=getIssueUnits();
+  if(!units.length){ host.innerHTML='<div class="card"><div class="body" style="text-align:center;color:#666">No tags generated yet. Add blood units from the New Tag page.</div></div>'; return; }
+  host.innerHTML=units.map((u,i)=>{
+    const safeUnit=String(u.unit||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return `<div class="card tag-preview-card" style="margin-bottom:18px"><div class="body">
+      <div class="no-print" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <strong>Tag ${i+1} — Unit ${safeUnit}</strong>
+        <button class="printbtn" onclick="printTagByIndex(${i})">Print This Tag — Zebra</button>
+      </div>
+      <div class="preview">
+        <div class="tag">
+          <div class="t-org">DR&nbsp;SULAIMAN&nbsp;AL&nbsp;HABIB&nbsp;MEDICAL&nbsp;GROUP</div>
+          <div class="t-header"><div class="t1">BLOOD BANK</div><div class="t2">COMPATIBILITY&nbsp;TAG</div></div>
+          <div class="t-line"><span class="t-label">Location:</span><span class="t-value">${$('loc').value||'—'}</span></div>
+          <div class="t-field t-name"><span class="t-label">Patient's Name</span><span class="t-value">${$('name').value.trim()||'—'}</span></div>
+          <div class="t-field t-filenum"><span class="t-label">Patient's File Number</span><span class="t-value">${$('file').value.trim()||'—'}</span></div>
+          <div class="t-bg-head"><div>Patient's Blood Group</div><div>Donor's Blood Group</div></div>
+          <div class="t-bg-values"><div>${$('pg').value||'—'}</div><div>${u.dg||'—'}</div></div>
+          <div class="t-field t-compat"><span class="t-label">Type of Compatibility</span><span class="t-value">${u.status||'—'}</span></div>
+          <div class="t-line"><span class="t-label">Component:</span><span class="t-value">${u.comp||'—'}</span></div>
+          <div class="t-field t-unit"><span class="t-label">Unit Number</span><span class="t-value">${safeUnit||'—'}</span></div>
+          <div class="t-field t-expiry"><span class="t-label">Expiration Date</span><span class="t-value">${formatExpiryDate(u.exp||'—')}</span></div>
+          <div class="t-sigdate"><div><span class="t-label">Technologist</span><span class="t-value">${$('tech').value.trim()||'—'}</span></div><div><span class="t-label">Date / Time</span><span class="t-value">${u.dt||now()}</span></div></div>
+          <div class="t-verify">I hereby checked &amp; verified the above information with the blood unit prior to transfusion<br>(please attach this tag to patient&rsquo;s chart)</div>
+        </div>
+      </div>
+    </div></div>`;
+  }).join('');
+}
+async function printTagByIndex(i){
+  const units=getIssueUnits(); const x=units[i];
+  if(!x){alert('Tag not found.');return false;}
+  const req=[['tech','Technologist ID']];
+  const m=req.filter(a=>!$(a[0]).value.trim());
+  if(m.length){alert('REQUIRED: '+m.map(a=>a[1]).join(', '));return false;}
+  try{
+    const r=await fetch(PRINT_AGENT_URL+'/print/tag-bitmap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildTagBitmap(tagDataForUnit(x)))});
+    const j=await r.json(); if(!r.ok||!j.ok) throw new Error(j.error||'Direct print failed');
+    $('msg').className='message no-print'; $('msg').textContent='✓ TAG '+(i+1)+' SENT TO ZDESIGNER GK420T'; addAudit('TAG_PRINT', x);
+    return true;
+  }catch(e){alert('Direct Zebra printing failed.\n\n'+e.message+'\n\nMake sure the Print Agent is running on this PC.');return false;}
+}
+function printCurrentPreviewTag(){
+  const units=getIssueUnits(); if(!units.length){alert('Add at least one blood unit first.');return;}
+  return printTagByIndex(units.length-1);
+}
+
+function renderUnitList(){const a=getIssueUnits();$('unitList').innerHTML=a.length?'<table class="hist"><tr><th>#</th><th>Unit</th><th>Component</th><th>Donor Group</th><th>Compatibility</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${x.status}</td><td><button class="secondary" onclick="removeIssueUnit(${i})">Remove</button></td></tr>`).join('')+'</table>':'No units added yet.'}
+function generate(){
+  const req=[['tech','Technologist ID']]; const m=req.filter(x=>!$(x[0]).value.trim());
+  if(m.length){$('msg').className='message error no-print';$('msg').textContent='REQUIRED: '+m.map(x=>x[1]).join(', ');return}
+  const rows=collectRequestedUnits(); if(!rows.length){alert('Add at least one requested unit.');return}
+  const missing=rows.map((x,i)=>!x.unit?i+1:null).filter(Boolean); if(missing.length){alert('Enter or scan the Blood Unit Number for Unit '+missing.join(', Unit ')+'.');return}
+  for(const x of rows){if(x.exp&&x.exp<new Date().toISOString().slice(0,10)){if(!confirm('The selected expiry date for one or more units has passed. Continue only if this is a controlled test case?'))return;break}}
+  const existing=getIssueUnits(); const merged=[...existing];
+  for(const item of rows){if(!merged.some(x=>x.unit===item.unit)){merged.push(item);saveHistoryRecord(item)}}
+  setIssueUnits(merged);
+  $('o_name').textContent=$('name').value.trim()||'UNKNOWN';$('o_unit').textContent=rows[0].unit;$('o_file').textContent=$('file').value.trim()||'UNKNOWN';$('o_dg').textContent=rows[0].dg;$('o_pg').textContent=$('pg').value;$('o_exp').textContent=rows[0].exp||'—';$('o_time').textContent=now();$('o_tech').textContent=$('tech').value.trim();$('o_loc').textContent=$('loc').value;$('o_comp').textContent=rows[0].comp;$('o_status').textContent=rows[0].status;
+  $('msg').textContent='✓ '+rows.length+' TAG(S) GENERATED — ISSUE REPORT READY'; renderTagPreviews(); show('tagPage',document.querySelectorAll('.nav button')[1]);
+}
+function clearForm(){document.querySelectorAll('#new input').forEach(i=>i.value='');$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value='';renderRequestedUnits();}
+function getHistory(){try{const a=JSON.parse(localStorage.getItem('ctags')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+function historyView(){const a=getHistory(),q=($('histSearch')?.value||'').toLowerCase(),type=$('histType')?.value||'ALL';const f=a.filter(x=>(type==='ALL'||(x.releaseType||'ROUTINE')===type)&&(!q||Object.values(x).join(' ').toLowerCase().includes(q)));$('historyList').innerHTML=f.length?'<table class="hist"><tr><th>Time</th><th>Patient</th><th>File</th><th>Age</th><th>Sex</th><th>Doctor</th><th>Call Time</th><th>Unit</th><th>Component</th><th>Status</th><th>Type</th><th>Tech</th></tr>'+f.map(x=>`<tr><td>${x.time||'—'}</td><td>${x.name||'—'}</td><td>${x.file||'—'}</td><td>${x.age||'—'}</td><td>${x.sex||'—'}</td><td>${(x.doctorName||'—')+(x.doctorId&&x.doctorId!=='—'?' / '+x.doctorId:'')}</td><td>${x.callTime||'—'}</td><td>${x.unit||'—'}</td><td>${x.comp||'—'}</td><td>${x.status||'—'}</td><td>${x.releaseType||'ROUTINE'}</td><td>${x.tech||'—'}</td></tr>`).join('')+'</table>': 'No matching records.'}
+function auditView(){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]')}catch(e){}const q=($('auditSearch')?.value||'').toLowerCase();const f=a.filter(x=>!q||Object.values(x).join(' ').toLowerCase().includes(q));$('auditList').innerHTML=f.length?'<table class="hist"><tr><th>Time</th><th>Action</th><th>User</th><th>Patient</th><th>File</th><th>Age</th><th>Sex</th><th>Unit</th><th>Type</th></tr>'+f.map(x=>`<tr><td>${x.time}</td><td>${x.action}</td><td>${x.user}</td><td>${x.patient}</td><td>${x.file}</td><td>${x.age||'—'}</td><td>${x.sex||'—'}</td><td>${x.unit}</td><td>${x.releaseType}</td></tr>`).join('')+'</table>':'No audit records yet.'}
+function dashboardView(){const a=getHistory(),d=now().slice(0,10);$('total').textContent=a.length;$('today').textContent=a.filter(x=>String(x.time||'').slice(0,10)===d).length;$('units').textContent=new Set(a.map(x=>x.unit).filter(Boolean)).size;$('emergencyCount').textContent=a.filter(x=>(x.releaseType||'ROUTINE')==='EMERGENCY').length;$('routineCount').textContent=a.filter(x=>(x.releaseType||'ROUTINE')==='ROUTINE').length;$('patientCount').textContent=new Set(a.map(x=>x.file).filter(x=>x&&x!=='—')).size;const counts=(key)=>{const m={};a.forEach(x=>{const k=x[key]||'—';m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><b>${v}</b></div>`).join('')||'—'};const ageGroup=(age)=>{const n=parseInt(age,10);if(!Number.isFinite(n))return 'Unknown';if(n<1)return '<1';if(n<=12)return '1–12';if(n<=17)return '13–17';if(n<=29)return '18–29';if(n<=44)return '30–44';if(n<=59)return '45–59';return '60+'};const ageCounts={};a.forEach(x=>{const k=ageGroup(x.age);ageCounts[k]=(ageCounts[k]||0)+1});const ageHtml=Object.entries(ageCounts).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><b>${v}</b></div>`).join('')||'—';$('componentStats').innerHTML=counts('comp');$('groupStats').innerHTML=counts('dg');$('sexStats').innerHTML=counts('sex');$('ageStats').innerHTML=ageHtml;$('techStats').innerHTML=counts('tech')}
+function exportHistoryCSV(){const a=getHistory();downloadCSV(a,'blood_release_history.csv')}
+function exportAuditCSV(){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]')}catch(e){}downloadCSV(a,'blood_release_audit.csv')}
+function downloadCSV(a,name){if(!a.length){alert('No records to export.');return}const keys=[...new Set(a.flatMap(x=>Object.keys(x)))];const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[keys.map(esc).join(','),...a.map(x=>keys.map(k=>esc(x[k])).join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),aEl=document.createElement('a');aEl.href=url;aEl.download=name;aEl.click();URL.revokeObjectURL(url)}
+function issueReportView(){const a=getIssueUnits();$('ir_name').textContent=$('name').value.trim()||'—';$('ir_file').textContent=$('file').value.trim()||'—';$('ir_ageSex').textContent=(($('age')?.value||'—')+' / '+($('sex')?.value||'—'));$('ir_doctor').textContent=(($('doctorName')?.value.trim()||'—')+' / '+($('doctorId')?.value.trim()||'—'));$('ir_call').textContent=$('callTime')?.value||'—';$('ir_loc').textContent=$('loc').value||'—';$('ir_time').textContent=now();$('ir_count').textContent=a.length;$('ir_types').textContent=a.length?[...new Set(a.map(x=>x.comp))].join(', '):'—';$('ir_issuer').textContent=$('tech').value.trim()||'—';$('issueRows').innerHTML=a.length?a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${formatExpiryDate(x.exp)}</td><td>${x.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center">No units added.</td></tr>'}
+
+
+const PRINT_AGENT_URL='http://127.0.0.1:8765';
+async function checkZebraAgent(){
+  const el=$('zebraStatus'); if(!el) return;
+  try{
+    const r=await fetch(PRINT_AGENT_URL+'/status',{cache:'no-store'}); const j=await r.json();
+    if(j.zebraFound){el.className='message no-print';el.style.borderColor='#2d7a3e';el.style.color='#1b5e20';el.textContent='✓ Zebra Print Agent connected — ZDesigner GK420t detected (USB).';}
+    else{el.className='message error no-print';el.textContent='Zebra Agent is running, but ZDesigner GK420t was not found in Windows.';}
+  }catch(e){el.className='message error no-print';el.textContent='Zebra Print Agent is not running. Start START_PrintAgent.bat on this Windows PC.';}
+}
+function buildTagBitmap(tagData=null){
+  // Print the bitmap to match the on-screen Compatibility Tag preview exactly.
+  // Physical size: 2.71 x 5.13 in at 203 dpi = 550 x 1041 px.
+  // IMPORTANT: keep the proven V41/V42 bitmap polarity and rotation.
+  const W=550,H=1041;
+  const c=document.createElement('canvas'); c.width=W; c.height=H;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.strokeStyle='#111'; ctx.lineWidth=1.5;
+  ctx.fillRect(0,0,W,H);
+  // The web preview is taller than the physical 2.71 x 5.13 in tag.
+  // Compress only the vertical layout so the complete preview fits on the physical tag.
+  // This preserves the same order, borders, fonts and overall design.
+  const PRINT_Y_SCALE = 0.89;
+  ctx.scale(1, PRINT_Y_SCALE);
+  const d=tagData||{
+    name:$('name').value.trim(), file:$('file').value.trim(), unit:$('unit').value.trim(),
+    pg:$('pg').value, dg:$('dg').value, status:STATUS_LABEL[$('status').value]||$('status').value,
+    comp:COMP_LABEL[$('comp').value]||$('comp').value, exp:$('exp').value||'—', tech:$('tech').value.trim(),
+    loc:$('loc').value, dt:now()
+  };
+  const X=5, Y=3, WW=W-10;
+  const rect=(y,h,lw=1.5)=>{ctx.lineWidth=lw;ctx.strokeRect(X,y,WW,h)};
+  const hline=(y,lw=1)=>{ctx.lineWidth=lw;ctx.beginPath();ctx.moveTo(X,y);ctx.lineTo(X+WW,y);ctx.stroke()};
+  const vline=(px,y1,y2,lw=1)=>{ctx.lineWidth=lw;ctx.beginPath();ctx.moveTo(px,y1);ctx.lineTo(px,y2);ctx.stroke()};
+  const txt=(t,px,py,size,weight='700',align='left',style='normal')=>{
+    ctx.font=`${style} ${weight} ${size}px "Times New Roman", Times, Georgia, serif`;
+    ctx.textAlign=align; ctx.textBaseline='middle'; ctx.fillStyle='#111';
+    ctx.fillText(String(t??'—'),px,py);
+  };
+  const label=(t,px,py,size=14)=>txt(t,px,py,size,'700','left','italic');
+  const value=(t,px,py,size=29,align='left')=>txt(t,px,py,size,'900',align);
+
+  // These heights mirror the web preview structure (without the signature block).
+  let y=Y;
+  rect(y,35,1.4);
+  txt('DR SULAIMAN AL HABIB MEDICAL GROUP',W/2,y+18,12,'700','center');
+  y+=35;
+
+  rect(y,100,1.4);
+  txt('BLOOD BANK',W/2,y+40,43,'700','center');
+  txt('C O M P A T I B I L I T Y  T A G',W/2,y+72,15,'700','center');
+  y+=100;
+
+  rect(y,59,1);
+  label('Location:',18,y+29,24); value(d.loc||'—',155,y+29,35); y+=59;
+
+  rect(y,126,1);
+  label("Patient's Name",18,y+24,23); value(d.name||'UNKNOWN',18,y+82,42); y+=126;
+
+  rect(y,95,1);
+  label("Patient's File Number",18,y+21,23); value(d.file||'UNKNOWN',18,y+51,42); y+=95;
+
+  // Blood group header + values, matching the web preview grid.
+  rect(y,51,1);
+  vline(W/2,y,y+51,1);
+  txt("Patient's Blood Group",W*.25,y+19,19,'800','center');
+  txt("Donor's Blood Group",W*.75,y+19,19,'800','center'); y+=51;
+  rect(y,142,1.2);
+  vline(W/2,y,y+142,1);
+  value(d.pg||'UNKNOWN',W*.25,y+76,45,'center');
+  value(d.dg||'—',W*.75,y+76,45,'center'); y+=142;
+
+  rect(y,91,1);
+  label('Type of Compatibility',18,y+23,23); value(d.status||'Uncrossmatch',18,y+60,40); y+=91;
+
+  rect(y,59,1);
+  label('Component:',18,y+30,23); value(d.comp||'—',235,y+30,39); y+=59;
+
+  rect(y,95,1);
+  label('Unit Number',18,y+22,23); value(d.unit||'—',18,y+61,42); y+=95;
+
+  rect(y,91,1);
+  label('Expiration Date',18,y+22,23); value(formatExpiryDate(d.exp||'—'),18,y+61,41); y+=91;
+
+  rect(y,108,1.2);
+  vline(W/2,y,y+108,1);
+  label('Technologist',18,y+23,18); value(d.tech||'—',18,y+68,34);
+  label('Date / Time',W/2+14,y+23,18); value(d.dt||now(),W/2+14,y+68,27);
+  y+=108;
+
+  rect(y,110,1);
+  txt('I hereby checked & verified the above information with the blood unit',W/2,y+38,16,'700','center');
+  txt('prior to transfusion',W/2,y+61,16,'700','center');
+  txt("(please attach this tag to patient's chart)",W/2,y+85,16,'700','center');
+
+  // Rotate and use the exact proven bitmap polarity for the GK420t.
+  const rotated=document.createElement('canvas'); rotated.width=W; rotated.height=H;
+  const rctx=rotated.getContext('2d'); rctx.translate(W,H); rctx.rotate(Math.PI); rctx.drawImage(c,0,0);
+  const img=rctx.getImageData(0,0,W,H).data, rowBytes=Math.ceil(W/8), bytes=new Uint8Array(rowBytes*H);
+  for(let yy=0;yy<H;yy++) for(let xx=0;xx<W;xx++){
+    const i=(yy*W+xx)*4; const lum=(img[i]*0.299+img[i+1]*0.587+img[i+2]*0.114);
+    if(lum<160) bytes[yy*rowBytes+(xx>>3)]|=(0x80>>(xx&7));
+  }
+  let hex=''; for(const b of bytes) hex+=b.toString(16).padStart(2,'0').toUpperCase();
+  return {width:W,height:H,rowBytes,hex};
+}
+
+async function printTagDirect(){
+  const req=[['file','Patient File Number'],['name','Patient Name'],['unit','Blood Unit Number'],['tech','Technologist ID']];
+  const m=req.filter(x=>!$(x[0]).value.trim());
+  if(m.length){alert('REQUIRED: '+m.map(x=>x[1]).join(', '));return false;}
+  const data={name:$('name').value.trim(),file:$('file').value.trim(),unit:$('unit').value.trim(),pg:$('pg').value,dg:$('dg').value,status:STATUS_LABEL[$('status').value]||$('status').value,comp:COMP_LABEL[$('comp').value]||$('comp').value,exp:$('exp').value||'—',tech:$('tech').value.trim(),loc:$('loc').value,dt:now()};
+  try{
+    const r=await fetch(PRINT_AGENT_URL+'/print/tag-bitmap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildTagBitmap(data))});
+    const j=await r.json(); if(!r.ok || !j.ok) throw new Error(j.error||'Direct print failed');
+    $('msg').className='message no-print'; $('msg').textContent='✓ COMPATIBILITY TAG SENT DIRECTLY TO ZDESIGNER GK420T';
+    return true;
+  }catch(e){alert('Direct Zebra printing failed.\n\n'+e.message+'\n\nMake sure the Print Agent is running on this PC.');return false;}
+}
+
+async function printAllTagsDirect(){
+  const units=getIssueUnits();
+  if(!units.length){alert('Add at least one blood unit before printing tags.');return false;}
+  const req=[['tech','Technologist ID']];
+  const m=req.filter(x=>!$(x[0]).value.trim());
+  if(m.length){alert('REQUIRED: '+m.map(x=>x[1]).join(', '));return false;}
+  const dt=now();
+  const bitmaps=units.map(x=>buildTagBitmap({
+    name:$('name').value.trim(),file:$('file').value.trim(),unit:x.unit,pg:$('pg').value,dg:x.dg,
+    status:x.status,comp:x.comp,exp:x.exp,tech:$('tech').value.trim(),loc:$('loc').value,dt
+  }));
+  try{
+    const r=await fetch(PRINT_AGENT_URL+'/print/tag-bitmaps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bitmaps})});
+    const j=await r.json(); if(!r.ok || !j.ok) throw new Error(j.error||'Batch direct print failed');
+    $('msg').className='message no-print'; $('msg').textContent='✓ '+units.length+' COMPATIBILITY TAG(S) SENT IN ONE PRINT JOB'; addAudit('BATCH_TAG_PRINT', {releaseType:$('releaseType')?.value||'ROUTINE', details:units.length+' tag(s) printed'});
+    return true;
+  }catch(e){alert('Batch Zebra printing failed.\n\n'+e.message+'\n\nMake sure the Print Agent is running on this PC.');return false;}
+}
+function printTagFromCenter(){
+  show('tagPage',document.querySelectorAll('.nav button')[1]);
+  printTag();
+}
+function printIssueFromCenter(emergency=false){
+  if(!getIssueUnits().length){alert('Add at least one blood unit before printing the Issue Report.');return}
+  issueReportView();
+  addAudit('ISSUE_REPORT_PRINT', {releaseType: emergency?'EMERGENCY':'ROUTINE', details:'A4 issue report printed'});
+  $('issuePrint').classList.toggle('emergency-mode',!!emergency);
+  show('issueReport',document.querySelectorAll('.nav button')[3]);
+  document.body.classList.remove('print-tag');
+  document.body.classList.add('print-issue');
+  setTimeout(()=>window.print(),150);
+}
+async function printTag(){
+  await printTagDirect();
+}
+function printIssueReport(emergency=false){
+  if(!getIssueUnits().length){alert('Add at least one blood unit before printing the Issue Report.');return}
+  issueReportView();
+  $('issuePrint').classList.toggle('emergency-mode',!!emergency);
+  document.body.classList.remove('print-tag');
+  document.body.classList.add('print-issue');
+  setTimeout(()=>window.print(),150);
+}
+window.addEventListener('afterprint',()=>{
+  document.body.classList.remove('print-tag','print-issue'); $('issuePrint').classList.remove('emergency-mode');
+});
+$('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();
+checkZebraAgent();
+document.addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('callTime');if(el&&!el.value){const d=new Date();el.value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}});
+</script>
+</body></html>

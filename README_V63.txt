@@ -1,0 +1,1 @@
+V63 update: Expiration Date month is displayed using abbreviated month names, e.g. 15 Sep 2026. Based on V62. Other functionality preserved.
