@@ -189,6 +189,19 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 
 .login-overlay{position:fixed;inset:0;background:rgba(20,10,12,.55);z-index:50;align-items:center;justify-content:center}
 .login-overlay[style*="display: flex"],.login-overlay[style*="display:flex"]{display:flex!important}
+.header-userbar{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.header-userbar #headerUser{font-size:13px;opacity:.95;text-align:right;white-space:nowrap}
+.logout-btn{
+  display:none;padding:8px 14px;font-size:12px;font-weight:800;letter-spacing:.2px;
+  background:#fff;color:var(--maroon-dark);border:0;border-radius:9px;cursor:pointer;
+  box-shadow:0 1px 0 rgba(0,0,0,.08);
+}
+.logout-btn:hover{filter:brightness(0.97)}
+.nav #logoutNav{color:var(--maroon)}
+@media(max-width:700px){
+  .header{height:auto;min-height:68px;padding:10px 14px;gap:8px;flex-wrap:wrap}
+  .header-userbar{width:100%;justify-content:flex-end}
+}
 </style>
 </head>
 <body>
@@ -206,10 +219,10 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 </div>
 <div class="header">
   <div class="brand"><h1>Emergency Blood Release Protocol</h1><span class="sub">Blood Bank &middot; Laboratory Department</span></div>
-  <div class="no-print" style="display:flex;align-items:center;gap:10px">
-  <div id="headerUser" style="font-size:13px;opacity:.95;text-align:right"></div>
-  <button id="signOutBtn" type="button" class="secondary" style="display:none;padding:8px 12px;font-size:12px" onclick="doLogout()">Sign out</button>
-</div>
+  <div class="no-print header-userbar">
+    <div id="headerUser"></div>
+    <button id="signOutBtn" type="button" class="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
+  </div>
 </div>
 <div class="nav">
   <button class="active" onclick="show('new',this)">New Tag</button>
@@ -217,6 +230,7 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
   <button onclick="show('history',this)">History</button><button onclick="show('audit',this)">Audit Trail</button><button onclick="show('issueReport',this)">Issue Report</button>
   <button onclick="show('dashboard',this)">Dashboard</button>
   <button id="usersNav" onclick="show('users',this)" style="display:none">Users</button>
+  <button id="logoutNav" type="button" onclick="doLogout()" style="display:none">Logout</button>
 </div>
 <main>
 
@@ -366,8 +380,10 @@ function isAdmin(){const r=String((getUser()&&getUser().role)||'').toLowerCase()
 function applyAdminUI(){
   const nav=$('usersNav'); if(nav) nav.style.display=isAdmin()?'':'none';
   const hu=$('headerUser'); const u=getUser();
-  if(hu) hu.textContent=u&&u.username?('Signed in as '+u.username+(isAdmin()?' (admin)':'')):'';
-  const so=$('signOutBtn'); if(so) so.style.display=u&&u.username?'':'none';
+  const signedIn=!!(u&&u.username);
+  if(hu) hu.textContent=signedIn?('Signed in as '+u.username+(isAdmin()?' (admin)':'')):'';
+  const so=$('signOutBtn'); if(so) so.style.display=signedIn?'inline-flex':'none';
+  const ln=$('logoutNav'); if(ln) ln.style.display=signedIn?'':'none';
 }
 function doLogout(){
   try{localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY)}catch(e){}
@@ -376,6 +392,7 @@ function doLogout(){
   $('serverStatus').className='message error no-print';
   $('serverStatus').textContent='Signed out. Sign in to save history on the server.';
   if($('loginErr')){$('loginErr').style.display='none';$('loginErr').textContent=''}
+  if($('loginUser')) $('loginUser').focus();
 }
 function showUsersMsg(text,ok){
   const el=$('usersMsg'); if(!el) return;
