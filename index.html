@@ -15,7 +15,6 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahom
 .header .brand{display:flex;flex-direction:column;line-height:1.15}
 .header h1{margin:0;font-size:20px;font-weight:800;letter-spacing:.3px}
 .header .sub{font-size:12px;opacity:.85;letter-spacing:.4px}
-.header .org{font-size:12px;opacity:.9;text-align:right}
 
 .nav{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .nav button{flex:1;border:0;background:transparent;padding:14px 8px;color:var(--muted);font-weight:700;font-size:13.5px;cursor:pointer;position:relative;transition:color .15s}
@@ -62,11 +61,6 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 
 @media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.stat-row{grid-template-columns:1fr}}
 
-/* ===================================================================
-   PRINT TAG — flat rectangular label, 2.71in x 5.13in
-   (matches the physical size of Form-BB-029 "Compatibility Tag" table
-    in the reference Word document)
-   =================================================================== */
 .tag{
   width:2.71in;height:5.13in;
   background:#fff;color:#111;
@@ -75,13 +69,10 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
   overflow:hidden;position:relative;
   display:flex;flex-direction:column;
 }
-.tag .t-org{height:.18in;display:flex;align-items:center;justify-content:center;font-size:5.8pt;font-weight:700;letter-spacing:.6px;color:#444;border-bottom:.7px solid #999}
 .tag .t-header{height:.44in;display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1.4px solid #111;background:#faf7f7}
 .tag .t-header .t1{font-size:14.5pt;font-weight:700;letter-spacing:.3px;color:#000;line-height:1.1}
 .tag .t-header .t2{font-size:7pt;font-weight:700;letter-spacing:3.5px;color:#333;margin-top:1px;line-height:1.1}
 
-/* single-value rows: only the chosen option is printed, plain and legible,
-   instead of a checkbox list of every possible option */
 .t-line{height:.24in;display:flex;align-items:center;gap:.06in;padding:0 .09in;border-bottom:1px solid #777;font-size:6.9pt;font-weight:700;white-space:nowrap;overflow:hidden}
 .t-line .t-label{flex:none;line-height:1.1;font-style:italic}
 .t-line .t-value{font-size:9.5pt;font-weight:900;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
@@ -113,11 +104,6 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 
 .t-verify{flex:none;height:.42in;display:flex;align-items:center;justify-content:center;text-align:center;font-size:6.4pt;line-height:1.22;font-weight:600;padding:.03in .12in;border-bottom:.7px solid #999;color:#222}
 
-.t-footer{height:.23in;display:flex;align-items:center;justify-content:center;gap:.08in;font-size:5.6pt;color:#555;font-weight:700;letter-spacing:.2px;margin-top:auto}
-
-
-/* V27 preview sizing — visually match the enlarged bitmap tag */
-.tag .t-org{height:.17in;font-size:6.5pt}
 .tag .t-header{height:.49in}
 .tag .t-header .t1{font-size:16pt}.tag .t-header .t2{font-size:7.5pt}
 .t-line{height:.29in;font-size:9pt}.t-line .t-value{font-size:12.5pt}
@@ -127,30 +113,17 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 .t-bg-head{height:.25in}.t-bg-head div{font-size:8pt}.t-bg-values{height:.70in}.t-bg-values div{font-size:19pt}
 .t-sigdate{height:.53in}.t-sigdate .t-label{font-size:7pt}.t-sigdate .t-value{font-size:9.5pt}
 .t-verify{height:.54in;font-size:7pt;line-height:1.25;padding:.04in .1in}
-@media print{
-  @page{size:2.71in 5.13in;margin:0}
-  html,body{width:2.71in;height:5.13in;margin:0;padding:0;background:#fff!important}
-  .header,.nav,.no-print,.page:not(#tagPage){display:none!important}
-  main{width:2.71in;margin:0;padding:0}
-  .page#tagPage{display:block!important}
-  .card,.body{margin:0;padding:0;border:0;box-shadow:none}
-  .preview{padding:0;background:#fff!important}
-  .tag{border:0;border-radius:0;box-shadow:none!important}
-  .tag *{color:#000!important}
-}
 
 .issue-report{background:#fff;color:#111;border:1px solid #222;padding:24px;font-family:"Times New Roman",Times,serif;max-width:980px;margin:auto}
-.ir-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #111;padding-bottom:14px;margin-bottom:18px}.ir-title{font-size:24px;font-weight:900;letter-spacing:.8px}.ir-subtitle{font-size:18px;font-weight:800;margin-top:4px;letter-spacing:1px}.ir-org{font-size:12px;font-weight:800;text-align:right}
+.ir-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #111;padding-bottom:14px;margin-bottom:18px}.ir-title{font-size:24px;font-weight:900;letter-spacing:.8px}.ir-subtitle{font-size:18px;font-weight:800;margin-top:4px;letter-spacing:1px}
 .ir-patient{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #555;margin-bottom:16px}.ir-patient>div{padding:10px 12px;border-bottom:1px solid #777}.ir-patient>div:nth-child(odd){border-right:1px solid #777}.ir-patient>div:nth-last-child(-n+2){border-bottom:0}.ir-patient span,.ir-summary span{display:block;font-size:11px;font-weight:700;color:#444;text-transform:uppercase}.ir-patient b{display:block;font-size:16px;margin-top:3px}
 .ir-summary{display:grid;grid-template-columns:1fr 2fr;border:1px solid #555;margin-bottom:16px}.ir-summary>div{padding:10px 12px}.ir-summary>div:first-child{border-right:1px solid #777}.ir-summary b{display:block;font-size:17px;margin-top:3px}
 .issue-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:22px}.issue-table th{background:#222;color:#fff;padding:8px 6px;border:1px solid #222}.issue-table td{padding:8px 6px;border:1px solid #555;text-align:center}
 .ir-signatures{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px}.signature-box{border:1px solid #555;padding:12px;min-height:150px}.signature-box strong{font-size:14px}.sig-line{border-bottom:1px solid #111;height:34px;margin-bottom:10px}.sig-label{font-size:11px;margin:7px 0}.ir-note{border-top:1px solid #777;margin-top:18px;padding-top:10px;font-size:10px;line-height:1.3;text-align:center}
-@media print{ @page{size:A4 portrait;margin:10mm} body{background:#fff!important}.header,.nav,.no-print,.page:not(#issueReport){display:none!important}main{width:auto;max-width:none;margin:0;padding:0}#issueReport{display:block!important}#issueReport .card{border:0;margin:0;box-shadow:none}#issueReport .body{padding:0}.issue-report{border:0;max-width:none;padding:0}}
 
-/* V3 Issue Report layout and reliable A4 portrait printing */
 .issue-report{box-sizing:border-box;width:194mm;min-height:281mm;margin:auto;padding:9mm;background:#fff;color:#111;font-family:"Times New Roman",Times,serif}
 .issue-report .ir-header{padding-bottom:12px;margin-bottom:14px;border-bottom-width:3px}
-.issue-report .ir-title{font-size:30px;line-height:1.05}.issue-report .ir-subtitle{font-size:22px;line-height:1.1;margin-top:5px}.issue-report .ir-org{font-size:12px}
+.issue-report .ir-title{font-size:30px;line-height:1.05}.issue-report .ir-subtitle{font-size:22px;line-height:1.1;margin-top:5px}
 .issue-report .ir-patient{margin-bottom:14px}.issue-report .ir-patient>div{padding:10px 12px;min-height:19mm;box-sizing:border-box}
 .issue-report .ir-patient span,.issue-report .ir-summary span{font-size:12px;font-weight:700;display:block;margin-bottom:4px}.issue-report .ir-patient b{font-size:20px;line-height:1.1}
 .issue-report .ir-summary{margin-bottom:14px}.issue-report .ir-summary>div{padding:10px 12px;min-height:20mm}.issue-report .ir-summary b{font-size:21px;line-height:1.1}
@@ -158,21 +131,14 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 .issue-report .ir-signatures{gap:14px;margin-top:12px}.issue-report .signature-box{min-height:40mm;padding:12px}.issue-report .signature-box strong{font-size:18px}.issue-report .sig-line{height:28px;margin-bottom:9px}.issue-report .sig-label{font-size:12px;margin:7px 0}
 .issue-report .ir-note{margin-top:14px;padding-top:9px;font-size:11px;line-height:1.25}
 
-/* V21 — Emergency Release Issue Report option */
 .issue-report .ir-emergency{display:none;margin-top:14px;border:2px solid #111;padding:12px 14px;font-size:12px;line-height:1.35;font-weight:700;text-align:left}
 .issue-report.emergency-mode .ir-emergency{display:block}
 .issue-report .ir-emergency-title{font-size:14px;font-weight:900;text-transform:uppercase;margin-bottom:7px}
 @media print{.issue-report.emergency-mode .ir-emergency{display:block!important}}
 
-
-
-
-
-/* V7 PRINT CENTER: isolated output modes */
 @media print{
   html,body{margin:0!important;padding:0!important;background:#fff!important}
 
-  /* Tag: exact stock size */
   body.print-tag .page{display:none!important}
   body.print-tag #tagPage{page:tagPage;
     display:block!important;
@@ -195,7 +161,6 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
     border:1px solid #111!important;border-radius:0!important;box-shadow:none!important;
   }
 
-  /* Issue Report: full A4 portrait */
   body.print-issue .page{display:none!important}
   body.print-issue #issueReport{page:issuePage;
     display:block!important;width:198mm!important;min-height:285mm!important;
@@ -219,20 +184,39 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 @page tagPage {size:2.71in 5.13in;margin:0}
 @page issuePage {size:A4 portrait;margin:6mm}
 
-.workflow{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 18px;max-width:900px;color:#777;font-size:12px}.wf{border:1px solid #bbb;border-radius:10px;padding:6px 12px;text-align:center;min-width:74px;background:#fff}.wf.active{border-color:#8e0e15;color:#8e0e15;font-weight:800}.wf span{font-size:10px}.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.ir-request{display:grid;grid-template-columns:1fr 1fr;border:1px solid #555;margin-bottom:14px}.ir-request>div{padding:8px 10px;border-bottom:1px solid #777}.ir-request>div:nth-child(odd){border-right:1px solid #777}.ir-request span{display:block;font-size:10px;font-weight:700;color:#444;text-transform:uppercase}.ir-request b{font-size:14px}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
-@media(max-width:800px){.dash-grid{grid-template-columns:1fr}.workflow{overflow:auto;justify-content:flex-start}}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
+@media(max-width:800px){.dash-grid{grid-template-columns:1fr}}
+
+.login-overlay{position:fixed;inset:0;background:rgba(20,10,12,.55);z-index:50;align-items:center;justify-content:center}
+.login-overlay[style*="display: flex"],.login-overlay[style*="display:flex"]{display:flex!important}
 </style>
 </head>
 <body>
+<div id="loginOverlay" class="login-overlay" style="display:none">
+  <div class="card" style="width:min(420px,92vw);margin:0">
+    <h2>Sign in to save history</h2>
+    <div class="body">
+      <p style="font-size:13px;color:#666;margin-top:0">Sign in to share history across PCs and phones. Default admin: <b>admin</b> / <b>admin123</b> (change after first login).</p>
+      <label>Username</label><input id="loginUser" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+      <label style="margin-top:10px">Password</label><input id="loginPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <div id="loginErr" class="message error no-print" style="display:none;margin-top:10px"></div>
+      <div class="actions" style="margin-top:14px"><button type="button" onclick="doLogin()">Sign in</button></div>
+    </div>
+  </div>
+</div>
 <div class="header">
   <div class="brand"><h1>Emergency Blood Release Protocol</h1><span class="sub">Blood Bank &middot; Laboratory Department</span></div>
-  <div class="org">Dr Sulaiman Al Habib Medical Group</div>
+  <div class="no-print" style="display:flex;align-items:center;gap:10px">
+  <div id="headerUser" style="font-size:13px;opacity:.95;text-align:right"></div>
+  <button id="signOutBtn" type="button" class="secondary" style="display:none;padding:8px 12px;font-size:12px" onclick="doLogout()">Sign out</button>
+</div>
 </div>
 <div class="nav">
   <button class="active" onclick="show('new',this)">New Tag</button>
   <button onclick="show('tagPage',this)">Tag Preview</button>
   <button onclick="show('history',this)">History</button><button onclick="show('audit',this)">Audit Trail</button><button onclick="show('issueReport',this)">Issue Report</button>
   <button onclick="show('dashboard',this)">Dashboard</button>
+  <button id="usersNav" onclick="show('users',this)" style="display:none">Users</button>
 </div>
 <main>
 
@@ -254,11 +238,17 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 </div>
 </div>
 <div class="alert warn" style="margin-top:16px"><b>Direct Zebra mode:</b> Compatibility Tags are sent to <b>ZDesigner GK420t</b> through the Windows Print Agent. No browser print dialog is used. Issue Reports remain normal A4 printing.</div>
-<div id="zebraStatus" class="message no-print" style="margin-top:10px">Checking Zebra Print Agent…</div>
 </div></div>
 </section>
 
 <section id="new" class="page active">
+  <div id="serverStatus" class="message no-print" style="margin-bottom:14px">Connecting to server…</div>
+  <div class="card no-print"><h2>Printer Connection</h2><div class="body">
+    <label>Print agent address</label>
+    <div class="scan"><input id="printAgentUrl" placeholder="http://127.0.0.1:8770"><button class="secondary" type="button" onclick="savePrintAgentUrl()">Save &amp; Check</button></div>
+    <div style="font-size:12px;color:#5c636b;margin:8px 0 10px">On the PC with the Zebra printer, keep this as <b>http://127.0.0.1:8770</b> and run START_PrintAgent.bat. On a phone or another PC, enter <b>http://PRINTER-PC-IP:8770</b>.</div>
+    <div id="zebraStatus" class="message no-print">Checking Zebra Print Agent…</div>
+  </div></div>
   <div class="card"><h2>Patient Information</h2><div class="body grid">
     <div class="full"><label>Patient File Number</label><div class="scan"><input id="file" value="UNKNOWN" placeholder="Enter or scan patient file number"><button onclick="focusId('file')">SCAN</button></div></div>
     <div><label>Patient Name</label><input id="name" value="UNKNOWN" placeholder="Enter patient name"></div>
@@ -312,7 +302,7 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 <section id="issueReport" class="page">
 <div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new',document.querySelector('.nav button'))">Back</button></div>
 <div class="card"><div class="body"><div id="issuePrint" class="issue-report">
-<div class="ir-header"><div><div class="ir-title">BLOOD BANK</div><div class="ir-subtitle">BLOOD ISSUE REPORT</div></div><div class="ir-org">DR SULAIMAN AL HABIB MEDICAL GROUP</div></div>
+<div class="ir-header"><div><div class="ir-title">BLOOD BANK</div><div class="ir-subtitle">BLOOD ISSUE REPORT</div></div></div>
 <div class="ir-patient">
 <div><span>Patient Name</span><b id="ir_name">—</b></div><div><span>Patient File Number</span><b id="ir_file">—</b></div>
 <div><span>Patient Age / Sex</span><b id="ir_ageSex">—</b></div>
@@ -344,12 +334,168 @@ I believe that the patient's life is in jeopardy without an emergency transfusio
   </div></div>
 </section>
 
+<section id="users" class="page">
+  <div class="card"><h2>Users</h2><div class="body">
+    <div id="usersMsg" class="message no-print" style="display:none;margin-bottom:14px"></div>
+    <div id="usersList">Sign in as an admin to manage users.</div>
+  </div></div>
+  <div class="card"><h2>Add User</h2><div class="body grid">
+    <div><label>Username</label><input id="newUsername" autocomplete="off"></div>
+    <div><label>Password</label><input id="newPassword" type="password" minlength="4" autocomplete="new-password"></div>
+    <div><label>Role</label><select id="newRole"><option value="user">User</option><option value="admin">Admin</option></select></div>
+    <div class="full"><button type="button" onclick="addUser()">Add User</button></div>
+  </div></div>
+  <div class="card"><h2>Change Password</h2><div class="body grid">
+    <div><label>Username</label><select id="pwUsername"></select></div>
+    <div><label>New password</label><input id="pwNew" type="password" minlength="4" autocomplete="new-password"></div>
+    <div class="full"><button type="button" onclick="changeUserPassword()">Change Password</button></div>
+  </div></div>
+</section>
+
 </main>
 <script>
 
 const $=id=>document.getElementById(id);
+const API_URL='';
+const TOKEN_KEY='blood_session_token';
+const USER_KEY='blood_user';
+const PRINT_URL_KEY='bloodPrintAgentUrl';
+function getToken(){try{return localStorage.getItem(TOKEN_KEY)||''}catch(e){return ''}}
+function getUser(){try{return JSON.parse(localStorage.getItem(USER_KEY)||'null')}catch(e){return null}}
+function isAdmin(){const r=String((getUser()&&getUser().role)||'').toLowerCase();return r==='admin'||r==='superuser'||r==='super_admin'}
+function applyAdminUI(){
+  const nav=$('usersNav'); if(nav) nav.style.display=isAdmin()?'':'none';
+  const hu=$('headerUser'); const u=getUser();
+  if(hu) hu.textContent=u&&u.username?('Signed in as '+u.username+(isAdmin()?' (admin)':'')):'';
+  const so=$('signOutBtn'); if(so) so.style.display=u&&u.username?'':'none';
+}
+function doLogout(){
+  try{localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY)}catch(e){}
+  applyAdminUI();
+  $('loginOverlay').style.display='flex';
+  $('serverStatus').className='message error no-print';
+  $('serverStatus').textContent='Signed out. Sign in to save history on the server.';
+  if($('loginErr')){$('loginErr').style.display='none';$('loginErr').textContent=''}
+}
+function showUsersMsg(text,ok){
+  const el=$('usersMsg'); if(!el) return;
+  if(!text){el.style.display='none';return}
+  el.style.display='block';
+  el.className='message no-print'+(ok?'':' error');
+  el.textContent=text;
+}
+function getPrintAgentUrl(){try{return (localStorage.getItem(PRINT_URL_KEY)||'http://127.0.0.1:8770').replace(/\/$/,'')}catch(e){return 'http://127.0.0.1:8770'}}
+function savePrintAgentUrl(){const v=($('printAgentUrl')?.value||'').trim().replace(/\/$/,'')||'http://127.0.0.1:8770';try{localStorage.setItem(PRINT_URL_KEY,v)}catch(e){}$('printAgentUrl').value=v;checkZebraAgent()}
+async function api(path,options={}){
+  const headers={...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})};
+  const tok=getToken(); if(tok) headers.Authorization='Bearer '+tok;
+  const res=await fetch(API_URL+path,{...options,headers});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok){const d=data.detail; throw new Error(typeof d==='string'?d:(d&&d.msg)||data.error||('request_failed:'+path));}
+  return data;
+}
+async function doLogin(){
+  const username=$('loginUser').value.trim(), password=$('loginPass').value;
+  try{
+    $('loginErr').style.display='none';
+    const data=await api('/api/login',{method:'POST',body:JSON.stringify({username,password})});
+    if(data.session_token) localStorage.setItem(TOKEN_KEY,data.session_token);
+    if(data.user) localStorage.setItem(USER_KEY,JSON.stringify(data.user));
+    $('loginOverlay').style.display='none';
+    $('serverStatus').className='message no-print';
+    $('serverStatus').textContent='✓ Connected to server as '+(data.user&&data.user.username||username);
+    applyAdminUI();
+    await loadServerHistory();
+  }catch(e){
+    $('loginErr').style.display='block';
+    const msg=String(e.message||'Login failed');
+    if(/failed to fetch|networkerror|load failed/i.test(msg)){
+      $('loginErr').textContent='Cannot reach the login server. Open the app through the API server (not a plain file/static server), then try again.';
+    }else if(/invalid username or password/i.test(msg)){
+      $('loginErr').textContent='Invalid username or password. Default admin is admin / admin123 if the server was just set up.';
+    }else{
+      $('loginErr').textContent=msg;
+    }
+  }
+}
+async function loadServerHistory(){
+  if(!getToken()){ $('loginOverlay').style.display='flex'; $('serverStatus').className='message error no-print'; $('serverStatus').textContent='Sign in to save history on the server.'; return; }
+  try{
+    const localHist=getHistory();
+    const localAudit=(()=>{try{const a=JSON.parse(localStorage.getItem('auditTrail')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}})();
+    const [h,a]=await Promise.all([api('/api/history'),api('/api/audit')]);
+    if((!h.records||!h.records.length)&&localHist.length){ await api('/api/history',{method:'POST',body:JSON.stringify({records:localHist})}); }
+    if((!a.records||!a.records.length)&&localAudit.length){ await api('/api/audit',{method:'POST',body:JSON.stringify({records:localAudit})}); }
+    const freshH=(!h.records||!h.records.length)&&localHist.length ? await api('/api/history') : h;
+    const freshA=(!a.records||!a.records.length)&&localAudit.length ? await api('/api/audit') : a;
+    if(Array.isArray(freshH.records)) localStorage.setItem('ctags',JSON.stringify(freshH.records));
+    if(Array.isArray(freshA.records)) localStorage.setItem('auditTrail',JSON.stringify(freshA.records));
+    try{const me=await api('/api/me'); if(me.user) localStorage.setItem(USER_KEY,JSON.stringify(me.user))}catch(err){}
+    applyAdminUI();
+    historyView(); auditView(); dashboardView();
+    $('serverStatus').className='message no-print';
+    $('serverStatus').textContent='✓ History connected to the server';
+  }catch(e){
+    const msg=String(e.message||'');
+    if(/log in|session|401/i.test(msg)){ try{localStorage.removeItem(TOKEN_KEY)}catch(err){} $('loginOverlay').style.display='flex'; }
+    $('serverStatus').className='message error no-print';
+    $('serverStatus').textContent='Could not load history from server. '+msg;
+  }
+}
 function focusId(id){$(id).focus()}
-function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='history')historyView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView()}
+function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='history')historyView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView();if(id==='users')usersView()}
+function renderUsers(users){
+  const list=$('usersList'), sel=$('pwUsername');
+  if(!list) return;
+  const rows=Array.isArray(users)?users:[];
+  list.innerHTML=rows.length?'<table class="hist"><tr><th>Username</th><th>Role</th><th>Created</th></tr>'+rows.map(u=>`<tr><td>${u.username||'—'}</td><td>${u.role||'user'}</td><td>${u.created_at||'—'}</td></tr>`).join('')+'</table>':'No users yet.';
+  if(sel){
+    const current=sel.value;
+    sel.innerHTML=rows.map(u=>`<option value="${u.username}">${u.username} (${u.role||'user'})</option>`).join('');
+    if(current) sel.value=current;
+    const me=getUser();
+    if(me&&me.username&&[...sel.options].some(o=>o.value===me.username)) sel.value=me.username;
+  }
+}
+async function usersView(){
+  if(!isAdmin()){ showUsersMsg('Admin access required.',false); if($('usersList')) $('usersList').textContent='Sign in as an admin to manage users.'; return; }
+  try{
+    showUsersMsg('',true);
+    const data=await api('/api/users');
+    renderUsers(data.users||[]);
+  }catch(e){
+    showUsersMsg(e.message||'Could not load users',false);
+  }
+}
+async function addUser(){
+  const username=($('newUsername')?.value||'').trim();
+  const password=$('newPassword')?.value||'';
+  const role=$('newRole')?.value||'user';
+  if(!username){ showUsersMsg('Username is required.',false); return; }
+  if(password.length<4){ showUsersMsg('Password must be at least 4 characters.',false); return; }
+  try{
+    const data=await api('/api/users',{method:'POST',body:JSON.stringify({username,password,role})});
+    if($('newUsername')) $('newUsername').value='';
+    if($('newPassword')) $('newPassword').value='';
+    renderUsers(data.users||[]);
+    showUsersMsg('User '+username+' added.',true);
+  }catch(e){
+    showUsersMsg(e.message||'Could not add user',false);
+  }
+}
+async function changeUserPassword(){
+  const username=($('pwUsername')?.value||'').trim();
+  const password=$('pwNew')?.value||'';
+  if(!username){ showUsersMsg('Select a user.',false); return; }
+  if(password.length<4){ showUsersMsg('Password must be at least 4 characters.',false); return; }
+  try{
+    await api('/api/users/password',{method:'POST',body:JSON.stringify({username,password})});
+    if($('pwNew')) $('pwNew').value='';
+    showUsersMsg('Password updated for '+username+'.',true);
+  }catch(e){
+    showUsersMsg(e.message||'Could not change password',false);
+  }
+}
 function now(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
 function formatExpiryDate(v){if(!v||v==='—')return v||'—';const m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)return v;const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const month=months[Number(m[2])-1];return month?`${Number(m[3])} ${month} ${m[1]}`:v;}
 const COMP_LABEL={PRBC:'PRBC',PLT:'PLT',TFFP:'TFFP',Cryo:'Cryo'};
@@ -381,8 +527,8 @@ function addRequestedUnitsToIssue(){
   for(const item of rows){if(merged.some(x=>x.unit===item.unit)){alert('This blood unit is already added: '+item.unit);return false;} merged.push(item); saveHistoryRecord(item);}
   setIssueUnits(merged); $('msg').className='message no-print'; $('msg').textContent='✓ '+rows.length+' UNIT(S) ADDED — READY FOR ISSUE REPORT';
 }
-function saveHistoryRecord(x){const key='ctags';let a=getHistory();const record={time:x.dt||now(),name:$('name').value.trim()||'—',file:$('file').value.trim()||'—',unit:x.unit||'—',status:x.status||'—',releaseType:$('releaseType')?.value||'ROUTINE',comp:x.comp||'—',dg:x.dg||'—',loc:$('loc').value||'—',tech:$('tech').value.trim()||'—',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN'};a.unshift(record);localStorage.setItem(key,JSON.stringify(a.slice(0,500)));addAudit('UNIT_ADDED',record);historyView();dashboardView()}
-function addAudit(action,x={}){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]');if(!Array.isArray(a))a=[]}catch(e){a=[]}a.unshift({time:now(),action,user:$('tech')?.value.trim()||'—',patient:$('name')?.value.trim()||'—',file:$('file')?.value.trim()||'—',unit:x.unit||'—',releaseType:x.releaseType||'ROUTINE',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN',details:x.details||''});localStorage.setItem('auditTrail',JSON.stringify(a.slice(0,1000)))}
+function saveHistoryRecord(x){const record={time:x.dt||now(),name:$('name').value.trim()||'—',file:$('file').value.trim()||'—',unit:x.unit||'—',status:x.status||'—',releaseType:$('releaseType')?.value||'ROUTINE',comp:x.comp||'—',dg:x.dg||'—',loc:$('loc').value||'—',tech:$('tech').value.trim()||'—',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN'};const a=getHistory();a.unshift(record);localStorage.setItem('ctags',JSON.stringify(a.slice(0,500)));addAudit('UNIT_ADDED',record);api('/api/history',{method:'POST',body:JSON.stringify({records:[record]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('ctags',JSON.stringify(d.records));historyView();dashboardView();}).catch(e=>{$('serverStatus').className='message error no-print';$('serverStatus').textContent='History saved on this device only — server error: '+e.message});historyView();dashboardView()}
+function addAudit(action,x={}){const row={time:now(),action,user:$('tech')?.value.trim()||'—',patient:$('name')?.value.trim()||'—',file:$('file')?.value.trim()||'—',unit:x.unit||'—',releaseType:x.releaseType||'ROUTINE',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN',details:x.details||''};let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]');if(!Array.isArray(a))a=[]}catch(e){a=[]}a.unshift(row);localStorage.setItem('auditTrail',JSON.stringify(a.slice(0,1000)));api('/api/audit',{method:'POST',body:JSON.stringify({records:[row]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('auditTrail',JSON.stringify(d.records));auditView();}).catch(()=>{})}
 function removeIssueUnit(i){const a=getIssueUnits();a.splice(i,1);setIssueUnits(a)}
 function clearIssueUnits(){sessionStorage.removeItem('issueUnits');renderUnitList();renderTagPreviews()}
 function tagDataForUnit(x){
@@ -401,7 +547,6 @@ function renderTagPreviews(){
       </div>
       <div class="preview">
         <div class="tag">
-          <div class="t-org">DR&nbsp;SULAIMAN&nbsp;AL&nbsp;HABIB&nbsp;MEDICAL&nbsp;GROUP</div>
           <div class="t-header"><div class="t1">BLOOD BANK</div><div class="t2">COMPATIBILITY&nbsp;TAG</div></div>
           <div class="t-line"><span class="t-label">Location:</span><span class="t-value">${$('loc').value||'—'}</span></div>
           <div class="t-field t-name"><span class="t-label">Patient's Name</span><span class="t-value">${$('name').value.trim()||'—'}</span></div>
@@ -426,7 +571,7 @@ async function printTagByIndex(i){
   const m=req.filter(a=>!$(a[0]).value.trim());
   if(m.length){alert('REQUIRED: '+m.map(a=>a[1]).join(', '));return false;}
   try{
-    const r=await fetch(PRINT_AGENT_URL+'/print/tag-bitmap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildTagBitmap(tagDataForUnit(x)))});
+    const r=await fetch(printAgentUrl()+'/print/tag-bitmap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildTagBitmap(tagDataForUnit(x)))});
     const j=await r.json(); if(!r.ok||!j.ok) throw new Error(j.error||'Direct print failed');
     $('msg').className='message no-print'; $('msg').textContent='✓ TAG '+(i+1)+' SENT TO ZDESIGNER GK420T'; addAudit('TAG_PRINT', x);
     return true;
@@ -447,8 +592,10 @@ function generate(){
   const existing=getIssueUnits(); const merged=[...existing];
   for(const item of rows){if(!merged.some(x=>x.unit===item.unit)){merged.push(item);saveHistoryRecord(item)}}
   setIssueUnits(merged);
-  $('o_name').textContent=$('name').value.trim()||'UNKNOWN';$('o_unit').textContent=rows[0].unit;$('o_file').textContent=$('file').value.trim()||'UNKNOWN';$('o_dg').textContent=rows[0].dg;$('o_pg').textContent=$('pg').value;$('o_exp').textContent=rows[0].exp||'—';$('o_time').textContent=now();$('o_tech').textContent=$('tech').value.trim();$('o_loc').textContent=$('loc').value;$('o_comp').textContent=rows[0].comp;$('o_status').textContent=rows[0].status;
-  $('msg').textContent='✓ '+rows.length+' TAG(S) GENERATED — ISSUE REPORT READY'; renderTagPreviews(); show('tagPage',document.querySelectorAll('.nav button')[1]);
+  $('msg').className='message no-print';
+  $('msg').textContent='✓ '+rows.length+' TAG(S) GENERATED — ISSUE REPORT READY';
+  renderTagPreviews();
+  show('tagPage',document.querySelectorAll('.nav button')[1]);
 }
 function clearForm(){document.querySelectorAll('#new input').forEach(i=>i.value='');$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value='';renderRequestedUnits();}
 function getHistory(){try{const a=JSON.parse(localStorage.getItem('ctags')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
@@ -461,27 +608,23 @@ function downloadCSV(a,name){if(!a.length){alert('No records to export.');return
 function issueReportView(){const a=getIssueUnits();$('ir_name').textContent=$('name').value.trim()||'—';$('ir_file').textContent=$('file').value.trim()||'—';$('ir_ageSex').textContent=(($('age')?.value||'—')+' / '+($('sex')?.value||'—'));$('ir_doctor').textContent=(($('doctorName')?.value.trim()||'—')+' / '+($('doctorId')?.value.trim()||'—'));$('ir_call').textContent=$('callTime')?.value||'—';$('ir_loc').textContent=$('loc').value||'—';$('ir_time').textContent=now();$('ir_count').textContent=a.length;$('ir_types').textContent=a.length?[...new Set(a.map(x=>x.comp))].join(', '):'—';$('ir_issuer').textContent=$('tech').value.trim()||'—';$('issueRows').innerHTML=a.length?a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${formatExpiryDate(x.exp)}</td><td>${x.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center">No units added.</td></tr>'}
 
 
-const PRINT_AGENT_URL='http://127.0.0.1:8765';
+function printAgentUrl(){return getPrintAgentUrl()}
 async function checkZebraAgent(){
   const el=$('zebraStatus'); if(!el) return;
+  const url=printAgentUrl();
+  if($('printAgentUrl')&&!$('printAgentUrl').value) $('printAgentUrl').value=url;
   try{
-    const r=await fetch(PRINT_AGENT_URL+'/status',{cache:'no-store'}); const j=await r.json();
-    if(j.zebraFound){el.className='message no-print';el.style.borderColor='#2d7a3e';el.style.color='#1b5e20';el.textContent='✓ Zebra Print Agent connected — ZDesigner GK420t detected (USB).';}
-    else{el.className='message error no-print';el.textContent='Zebra Agent is running, but ZDesigner GK420t was not found in Windows.';}
-  }catch(e){el.className='message error no-print';el.textContent='Zebra Print Agent is not running. Start START_PrintAgent.bat on this Windows PC.';}
+    const r=await fetch(url+'/status',{cache:'no-store'}); const j=await r.json();
+    if(j.zebraFound){el.className='message no-print';el.style.borderColor='#2d7a3e';el.style.color='#1b5e20';el.textContent='✓ Zebra Print Agent connected — ZDesigner GK420t detected.';}
+    else{el.className='message error no-print';el.textContent='Print Agent is running at '+url+', but ZDesigner GK420t was not found in Windows.';}
+  }catch(e){el.className='message error no-print';el.textContent='Print Agent not reached at '+url+'. On the printer PC run START_PrintAgent.bat. From a phone, use http://PRINTER-PC-IP:8770';}
 }
 function buildTagBitmap(tagData=null){
-  // Print the bitmap to match the on-screen Compatibility Tag preview exactly.
-  // Physical size: 2.71 x 5.13 in at 203 dpi = 550 x 1041 px.
-  // IMPORTANT: keep the proven V41/V42 bitmap polarity and rotation.
   const W=550,H=1041;
   const c=document.createElement('canvas'); c.width=W; c.height=H;
   const ctx=c.getContext('2d');
   ctx.fillStyle='#fff'; ctx.strokeStyle='#111'; ctx.lineWidth=1.5;
   ctx.fillRect(0,0,W,H);
-  // The web preview is taller than the physical 2.71 x 5.13 in tag.
-  // Compress only the vertical layout so the complete preview fits on the physical tag.
-  // This preserves the same order, borders, fonts and overall design.
   const PRINT_Y_SCALE = 0.89;
   ctx.scale(1, PRINT_Y_SCALE);
   const d=tagData||{
@@ -492,7 +635,6 @@ function buildTagBitmap(tagData=null){
   };
   const X=5, Y=3, WW=W-10;
   const rect=(y,h,lw=1.5)=>{ctx.lineWidth=lw;ctx.strokeRect(X,y,WW,h)};
-  const hline=(y,lw=1)=>{ctx.lineWidth=lw;ctx.beginPath();ctx.moveTo(X,y);ctx.lineTo(X+WW,y);ctx.stroke()};
   const vline=(px,y1,y2,lw=1)=>{ctx.lineWidth=lw;ctx.beginPath();ctx.moveTo(px,y1);ctx.lineTo(px,y2);ctx.stroke()};
   const txt=(t,px,py,size,weight='700',align='left',style='normal')=>{
     ctx.font=`${style} ${weight} ${size}px "Times New Roman", Times, Georgia, serif`;
@@ -502,12 +644,7 @@ function buildTagBitmap(tagData=null){
   const label=(t,px,py,size=14)=>txt(t,px,py,size,'700','left','italic');
   const value=(t,px,py,size=29,align='left')=>txt(t,px,py,size,'900',align);
 
-  // These heights mirror the web preview structure (without the signature block).
   let y=Y;
-  rect(y,35,1.4);
-  txt('DR SULAIMAN AL HABIB MEDICAL GROUP',W/2,y+18,12,'700','center');
-  y+=35;
-
   rect(y,100,1.4);
   txt('BLOOD BANK',W/2,y+40,43,'700','center');
   txt('C O M P A T I B I L I T Y  T A G',W/2,y+72,15,'700','center');
@@ -522,7 +659,6 @@ function buildTagBitmap(tagData=null){
   rect(y,95,1);
   label("Patient's File Number",18,y+21,23); value(d.file||'UNKNOWN',18,y+51,42); y+=95;
 
-  // Blood group header + values, matching the web preview grid.
   rect(y,51,1);
   vline(W/2,y,y+51,1);
   txt("Patient's Blood Group",W*.25,y+19,19,'800','center');
@@ -555,7 +691,6 @@ function buildTagBitmap(tagData=null){
   txt('prior to transfusion',W/2,y+61,16,'700','center');
   txt("(please attach this tag to patient's chart)",W/2,y+85,16,'700','center');
 
-  // Rotate and use the exact proven bitmap polarity for the GK420t.
   const rotated=document.createElement('canvas'); rotated.width=W; rotated.height=H;
   const rctx=rotated.getContext('2d'); rctx.translate(W,H); rctx.rotate(Math.PI); rctx.drawImage(c,0,0);
   const img=rctx.getImageData(0,0,W,H).data, rowBytes=Math.ceil(W/8), bytes=new Uint8Array(rowBytes*H);
@@ -573,7 +708,7 @@ async function printTagDirect(){
   if(m.length){alert('REQUIRED: '+m.map(x=>x[1]).join(', '));return false;}
   const data={name:$('name').value.trim(),file:$('file').value.trim(),unit:$('unit').value.trim(),pg:$('pg').value,dg:$('dg').value,status:STATUS_LABEL[$('status').value]||$('status').value,comp:COMP_LABEL[$('comp').value]||$('comp').value,exp:$('exp').value||'—',tech:$('tech').value.trim(),loc:$('loc').value,dt:now()};
   try{
-    const r=await fetch(PRINT_AGENT_URL+'/print/tag-bitmap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildTagBitmap(data))});
+    const r=await fetch(printAgentUrl()+'/print/tag-bitmap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildTagBitmap(data))});
     const j=await r.json(); if(!r.ok || !j.ok) throw new Error(j.error||'Direct print failed');
     $('msg').className='message no-print'; $('msg').textContent='✓ COMPATIBILITY TAG SENT DIRECTLY TO ZDESIGNER GK420T';
     return true;
@@ -592,7 +727,7 @@ async function printAllTagsDirect(){
     status:x.status,comp:x.comp,exp:x.exp,tech:$('tech').value.trim(),loc:$('loc').value,dt
   }));
   try{
-    const r=await fetch(PRINT_AGENT_URL+'/print/tag-bitmaps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bitmaps})});
+    const r=await fetch(printAgentUrl()+'/print/tag-bitmaps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bitmaps})});
     const j=await r.json(); if(!r.ok || !j.ok) throw new Error(j.error||'Batch direct print failed');
     $('msg').className='message no-print'; $('msg').textContent='✓ '+units.length+' COMPATIBILITY TAG(S) SENT IN ONE PRINT JOB'; addAudit('BATCH_TAG_PRINT', {releaseType:$('releaseType')?.value||'ROUTINE', details:units.length+' tag(s) printed'});
     return true;
@@ -613,7 +748,9 @@ function printIssueFromCenter(emergency=false){
   setTimeout(()=>window.print(),150);
 }
 async function printTag(){
-  await printTagDirect();
+  const units=getIssueUnits();
+  if(!units.length){alert('Add at least one blood unit before printing tags.');return false;}
+  return printTagByIndex(units.length-1);
 }
 function printIssueReport(emergency=false){
   if(!getIssueUnits().length){alert('Add at least one blood unit before printing the Issue Report.');return}
@@ -627,7 +764,11 @@ window.addEventListener('afterprint',()=>{
   document.body.classList.remove('print-tag','print-issue'); $('issuePrint').classList.remove('emergency-mode');
 });
 $('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();
+if($('printAgentUrl')) $('printAgentUrl').value=getPrintAgentUrl();
+if($('loginPass')) $('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doLogin();}});
+applyAdminUI();
 checkZebraAgent();
+loadServerHistory();
 document.addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('callTime');if(el&&!el.value){const d=new Date();el.value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}});
 </script>
 </body></html>
