@@ -189,15 +189,15 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 
 .login-overlay{position:fixed;inset:0;background:rgba(20,10,12,.55);z-index:50;align-items:center;justify-content:center}
 .login-overlay[style*="display: flex"],.login-overlay[style*="display:flex"]{display:flex!important}
-.header-userbar{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.header-userbar{display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative;z-index:20}
 .header-userbar #headerUser{font-size:13px;opacity:.95;text-align:right;white-space:nowrap}
 .logout-btn{
-  display:none;padding:8px 14px;font-size:12px;font-weight:800;letter-spacing:.2px;
+  padding:8px 14px;font-size:12px;font-weight:800;letter-spacing:.2px;
   background:#fff;color:var(--maroon-dark);border:0;border-radius:9px;cursor:pointer;
-  box-shadow:0 1px 0 rgba(0,0,0,.08);
+  box-shadow:0 1px 0 rgba(0,0,0,.08);pointer-events:auto;position:relative;z-index:21;
 }
 .logout-btn:hover{filter:brightness(0.97)}
-.nav #logoutNav{color:var(--maroon)}
+.nav #logoutNav{color:var(--maroon);position:relative;z-index:11}
 @media(max-width:700px){
   .header{height:auto;min-height:68px;padding:10px 14px;gap:8px;flex-wrap:wrap}
   .header-userbar{width:100%;justify-content:flex-end}
@@ -210,10 +210,12 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
     <h2>Sign in to save history</h2>
     <div class="body">
       <p style="font-size:13px;color:#666;margin-top:0">Sign in to share history across PCs and phones. Default admin: <b>admin</b> / <b>admin123</b> (change after first login).</p>
-      <label>Username</label><input id="loginUser" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
-      <label style="margin-top:10px">Password</label><input id="loginPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <form id="loginForm" autocomplete="off" onsubmit="event.preventDefault();doLogin();return false;">
+      <label>Username</label><input id="loginUser" name="username" autocomplete="username" onkeydown="if(event.key==='Enter'){event.preventDefault();doLogin()}">
+      <label style="margin-top:10px">Password</label><input id="loginPass" name="password" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault();doLogin()}">
       <div id="loginErr" class="message error no-print" style="display:none;margin-top:10px"></div>
-      <div class="actions" style="margin-top:14px"><button type="button" onclick="doLogin()">Sign in</button></div>
+      <div class="actions" style="margin-top:14px"><button type="submit">Sign in</button></div>
+      </form>
     </div>
   </div>
 </div>
@@ -384,8 +386,11 @@ function applyAdminUI(){
   if(hu) hu.textContent=signedIn?('Signed in as '+u.username+(isAdmin()?' (admin)':'')):'';
   const so=$('signOutBtn'); if(so) so.style.display=signedIn?'inline-flex':'none';
   const ln=$('logoutNav'); if(ln) ln.style.display=signedIn?'':'none';
+  bindLogoutButtons();
 }
-function doLogout(){
+function doLogout(ev){
+  if(ev&&ev.preventDefault) ev.preventDefault();
+  if(ev&&ev.stopPropagation) ev.stopPropagation();
   try{localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY)}catch(e){}
   applyAdminUI();
   $('loginOverlay').style.display='flex';
@@ -393,6 +398,14 @@ function doLogout(){
   $('serverStatus').textContent='Signed out. Sign in to save history on the server.';
   if($('loginErr')){$('loginErr').style.display='none';$('loginErr').textContent=''}
   if($('loginUser')) $('loginUser').focus();
+  return false;
+}
+function bindLogoutButtons(){
+  ['signOutBtn','logoutNav'].forEach(id=>{
+    const el=$(id); if(!el||el.dataset.boundLogout) return;
+    el.dataset.boundLogout='1';
+    el.addEventListener('click',doLogout);
+  });
 }
 function showUsersMsg(text,ok){
   const el=$('usersMsg'); if(!el) return;
