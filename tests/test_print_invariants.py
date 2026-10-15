@@ -63,6 +63,7 @@ def test_homepage_hero_and_three_cards():
 
 
 def test_nav_items_and_admin_gate():
-    for label in ["Home", "Create Tag", "Tag Preview", "Issue Report", "History", "Audit Trail", "Admin"]:
+    for label in ["Home", "Create Tag", "Tag Preview", "Issue Report", "History", "Admin"]:
         assert f"<span>{label}</span>" in HTML
+    assert "<span>Audit Trail</span>" not in HTML
     assert 'id="usersNav"' in HTML and 'style="display:none"' in HTML
