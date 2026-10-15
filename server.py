@@ -19,8 +19,17 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parent
-DATA_DIR = Path(os.environ.get("BLOOD_DATA_DIR", ROOT / "data"))
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+# Vercel's deployment bundle is read-only; only /tmp is writable (and per-instance).
+_default_data_dir = Path("/tmp/blood-release-data") if os.environ.get("VERCEL") else ROOT / "data"
+DATA_DIR = Path(os.environ.get("BLOOD_DATA_DIR", _default_data_dir))
+try:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    _probe = DATA_DIR / ".write-test"
+    _probe.write_text("ok", encoding="utf-8")
+    _probe.unlink()
+except OSError:
+    DATA_DIR = Path("/tmp/blood-release-data")
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 USERS_FILE = DATA_DIR / "users.json"
 SESSIONS_FILE = DATA_DIR / "sessions.json"
