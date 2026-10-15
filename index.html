@@ -1,15 +1,22 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Compatibility Tag | Blood Bank</title>
+<title>Emergency Blood Release</title>
 <style>
 :root{
-  --maroon:#8e0e15;--maroon-dark:#6d0a10;--maroon-light:#b5121b;
-  --ink:#1c2024;--muted:#5c636b;--line:#d8dbdf;--bg:#eef0f2;--card:#fff;
-  --ok-bg:#eefaf1;--ok-line:#2f8f52;--ok-ink:#1c6b39;
-  --err-bg:#fdedee;--err-line:#c23440;--err-ink:#9c1f29;
-  --radius:14px;
+  /* Clinical design system — screen chrome (print/tag styles stay high-contrast black) */
+  --navy:#0f2744;--navy-dark:#0a1b30;--navy-light:#1a3d66;
+  --maroon:#0f2744;--maroon-dark:#0a1b30;--maroon-light:#1a3d66; /* legacy aliases → navy */
+  --ink:#152033;--muted:#5b677a;--line:#d5dbe6;--bg:#f3f5f8;--card:#fff;
+  --ok-bg:#e8f7ee;--ok-line:#2f8f52;--ok-ink:#1c6b39;
+  --err-bg:#fdecee;--err-line:#c23440;--err-ink:#9c1f29;
+  --warn-bg:#fff7e8;--warn-line:#c98512;--warn-ink:#8a5a00;
+  --info-bg:#eaf2fb;--info-line:#3b6ea5;--info-ink:#1e446e;
+  --focus:#2f6fed;--radius:12px;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;
+  --font:"Source Sans 3","Segoe UI",Tahoma,Arial,sans-serif;
+  --shadow:0 1px 2px rgba(15,39,68,.06),0 8px 24px rgba(15,39,68,.06);
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}
 
 .header{height:68px;background:linear-gradient(120deg,var(--maroon-light),var(--maroon-dark));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
 .header .brand{display:flex;flex-direction:column;line-height:1.15}
@@ -198,6 +205,45 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 }
 .logout-btn:hover{filter:brightness(0.97)}
 .nav #logoutNav{color:var(--maroon);position:relative;z-index:11}
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap');
+*:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+.app-shell{min-height:100vh;display:flex;flex-direction:column}
+.header{background:linear-gradient(120deg,var(--navy-light),var(--navy-dark))!important}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.badge.ok{background:var(--ok-bg);border-color:var(--ok-line);color:var(--ok-ink)}
+.badge.warn{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn-ink)}
+.badge.err{background:var(--err-bg);border-color:var(--err-line);color:var(--err-ink)}
+.badge.info{background:var(--info-bg);border-color:var(--info-line);color:var(--info-ink)}
+.alert{padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:13px}
+.alert.warn{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn-ink)}
+.alert.err{background:var(--err-bg);border-color:var(--err-line);color:var(--err-ink)}
+.alert.ok{background:var(--ok-bg);border-color:var(--ok-line);color:var(--ok-ink)}
+.alert.info{background:var(--info-bg);border-color:var(--info-line);color:var(--info-ink)}
+.field-error{color:var(--err-ink);font-size:12px;font-weight:700;margin-top:4px;display:none}
+.field-error.show{display:block}
+input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-shadow:0 0 0 3px rgba(194,52,64,.12)}
+.stepper{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:0;list-style:none}
+.stepper li{flex:1;min-width:140px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:12px;font-weight:700}
+.stepper li b{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px;opacity:.8}
+.stepper li.active{border-color:var(--navy);color:var(--navy);box-shadow:var(--shadow)}
+.stepper li.done{border-color:var(--ok-line);color:var(--ok-ink);background:var(--ok-bg)}
+.step-panel{display:none}
+.step-panel.active{display:block;animation:fade .18s ease}
+.progress-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.unit-progress{font-size:13px;font-weight:700;color:var(--navy)}
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.review-grid .full{grid-column:1/-1}
+.kv{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:12px}
+.kv span{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.kv b{display:block;margin-top:4px;font-size:15px}
+.empty-state{text-align:center;color:var(--muted);padding:28px 16px;border:1px dashed var(--line);border-radius:12px;background:#fafbfd}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+.card{box-shadow:var(--shadow)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+@media(max-width:700px){.review-grid{grid-template-columns:1fr}.stepper li{min-width:100%}}
+
 @media(max-width:700px){
   .header{height:auto;min-height:68px;padding:10px 14px;gap:8px;flex-wrap:wrap}
   .header-userbar{width:100%;justify-content:flex-end}
@@ -220,16 +266,19 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
   </div>
 </div>
 <div class="header">
-  <div class="brand"><h1>Emergency Blood Release Protocol</h1><span class="sub">Blood Bank &middot; Laboratory Department</span></div>
+  <div class="brand"><h1>Emergency Blood Release</h1><span class="sub">Blood Bank &middot; Laboratory Department</span></div>
   <div class="no-print header-userbar">
     <div id="headerUser"></div>
     <button id="signOutBtn" type="button" class="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
   </div>
 </div>
-<div class="nav">
-  <button class="active" onclick="show('new',this)">New Tag</button>
+<div class="nav no-print" role="navigation" aria-label="Main">
+  <button class="active" onclick="show('new',this)">New Release</button>
+  <button onclick="show('printCenter',this)">Print Center</button>
   <button onclick="show('tagPage',this)">Tag Preview</button>
-  <button onclick="show('history',this)">History</button><button onclick="show('audit',this)">Audit Trail</button><button onclick="show('issueReport',this)">Issue Report</button>
+  <button onclick="show('issueReport',this)">Issue Report</button>
+  <button onclick="show('history',this)">History</button>
+  <button onclick="show('audit',this)">Audit Trail</button>
   <button onclick="show('dashboard',this)">Dashboard</button>
   <button id="usersNav" onclick="show('users',this)" style="display:none">Users</button>
   <button id="logoutNav" type="button" onclick="doLogout()" style="display:none">Logout</button>
@@ -240,10 +289,10 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 <section id="printCenter" class="page">
 <div class="card"><div class="body">
 <h2 style="margin-top:0">Print Center</h2>
-<p style="color:#666;font-size:13px">Choose the document. The website fixes the paper size and layout for that document.</p>
+<p style="color:var(--muted);font-size:13px">Choose the document type. Tag printing and A4 report printing use separate pathways and paper sizes.</p>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
-<div style="border:1.5px solid #8e0e15;border-radius:12px;padding:18px">
-<h3 style="color:#8e0e15;margin-top:0">Compatibility Tag</h3>
+<div style="border:1.5px solid var(--navy);border-radius:12px;padding:18px">
+<h3 style="color:var(--navy);margin-top:0">Compatibility Tag</h3>
 <p style="font-size:12px;color:#666">Paper: <b>2.71 × 5.13 in</b><br>Printer: <b>Zebra GK420t</b><br>Scale: <b>100%</b></p>
 <button onclick="printTagFromCenter()">Print Tag — Direct Zebra</button>
 </div>
@@ -259,64 +308,115 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 
 <section id="new" class="page active">
   <div id="serverStatus" class="message no-print" style="margin-bottom:14px">Connecting to server…</div>
+
   <div class="card no-print"><h2>Printer Connection</h2><div class="body">
-    <label>Print agent address</label>
-    <div class="scan"><input id="printAgentUrl" placeholder="http://127.0.0.1:8770"><button class="secondary" type="button" onclick="savePrintAgentUrl()">Save &amp; Check</button></div>
-    <div style="font-size:12px;color:#5c636b;margin:8px 0 10px">On the PC with the Zebra printer, keep this as <b>http://127.0.0.1:8770</b> and run START_PrintAgent.bat. On a phone or another PC, enter <b>http://PRINTER-PC-IP:8770</b>.</div>
+    <label for="printAgentUrl">Print agent address</label>
+    <div class="scan"><input id="printAgentUrl" placeholder="http://127.0.0.1:8770" aria-describedby="printAgentHelp"><button class="secondary" type="button" onclick="savePrintAgentUrl()">Save &amp; Check</button></div>
+    <div id="printAgentHelp" style="font-size:12px;color:var(--muted);margin:8px 0 10px">On the PC with the Zebra printer, use <b>http://127.0.0.1:8770</b> (or the Print Agent port shown by START_PrintAgent.bat) and keep the agent running. From another device, use <b>http://PRINTER-PC-IP:PORT</b>.</div>
     <div id="zebraStatus" class="message no-print">Checking Zebra Print Agent…</div>
   </div></div>
-  <div class="card"><h2>Patient Information</h2><div class="body grid">
-    <div class="full"><label>Patient File Number</label><div class="scan"><input id="file" value="UNKNOWN" placeholder="Enter or scan patient file number"><button onclick="focusId('file')">SCAN</button></div></div>
-    <div><label>Patient Name</label><input id="name" value="UNKNOWN" placeholder="Enter patient name"></div>
-    <div><label>Patient Age</label><input id="age" type="number" min="0" max="120" placeholder="Enter age"></div>
-    <div><label>Sex</label><select id="sex"><option value="UNKNOWN">Unknown</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
-    <div><label>Patient Blood Group</label><select id="pg"><option>UNKNOWN</option><option>O POS</option><option>O NEG</option><option>A POS</option><option>A NEG</option><option>B POS</option><option>B NEG</option><option>AB POS</option><option>AB NEG</option></select></div>
-    <div><label>Ward / Location</label><select id="loc"><option>ER</option><option>OR</option><option>ICU</option><option>Ward</option><option>Other</option></select></div>
-    <div><label>Technologist ID *</label><input id="tech"></div>
-    <div><label>Doctor Name</label><input id="doctorName" placeholder="Enter doctor name"></div>
-    <div><label>Doctor ID</label><input id="doctorId" placeholder="Enter doctor ID"></div>
-    <div><label>Call Received Time</label><input id="callTime" type="time"></div>
-    <div><label>Release Type *</label><select id="releaseType"><option value="ROUTINE">Routine</option><option value="EMERGENCY" selected>Emergency / Urgent</option></select></div>
-    <div><label>Doctor Requested Number of Units *</label><input id="requestedUnits" type="number" min="1" max="50" value="1" oninput="renderRequestedUnits()"></div>
-    <div><label>Requested Blood Component *</label><select id="requestedComp" onchange="renderRequestedUnits()"><option value="PRBC">PRBC</option><option value="PLT">PLT</option><option value="TFFP">TFFP</option><option value="Cryo">Cryo</option></select></div>
-  </div></div>
 
-  <div class="card"><h2>Blood Units Requested by Doctor</h2><div class="body">
-    <div class="alert" style="margin-bottom:12px"><b>Requested:</b> <span id="requestSummary">1 × PRBC</span><br><span style="font-size:12px">Enter/scan the unit number for each requested unit. The number of unit fields is based on the doctor's request.</span></div>
-    <div id="requestedUnitsList"></div>
-  </div></div>
+  <div class="card no-print"><h2>New Release</h2><div class="body">
+    <ol class="stepper" id="releaseStepper" aria-label="Release workflow steps">
+      <li class="active" data-step="1"><b>Step 1</b>Patient Information</li>
+      <li data-step="2"><b>Step 2</b>Release Details</li>
+      <li data-step="3"><b>Step 3</b>Blood Unit Entry</li>
+      <li data-step="4"><b>Step 4</b>Review &amp; Documents</li>
+    </ol>
+    <div class="progress-meta">
+      <div class="unit-progress" id="unitProgress">Requested units: 0 / 1 entered</div>
+      <span class="badge info" id="releaseTypeBadge">Emergency</span>
+    </div>
+    <div id="stepMsg" class="alert info" style="margin-bottom:14px">Complete each step. Clinical compatibility must be entered from approved source data — scanning does not decide compatibility.</div>
 
-<div class="card no-print"><h2>Units for This Issue</h2><div class="body">
-<div id="unitList" style="margin-bottom:12px;color:#5c636b">No units added yet.</div>
-<button onclick="addRequestedUnitsToIssue()">Add All Requested Units to Issue Report</button>
-<button class="printbtn" onclick="printAllTagsDirect()">Print All Tags — Zebra (One Print Job)</button>
-<button class="secondary" onclick="clearIssueUnits()">Clear Units</button>
-<div style="margin-top:10px;font-size:12px;color:#5c636b">The Issue Report will show the requested total and each blood unit entered. Patient name and file number default to <b>UNKNOWN</b> when not available.</div>
-</div></div>
-<div class="actions no-print"><button onclick="generate()">Generate Compatibility Tag</button><button class="secondary" onclick="clearForm()">Clear</button></div>
-  <div id="msg" class="message no-print">READY — ENTER PATIENT AND BLOOD UNIT INFORMATION</div>
+    <!-- Step 1 -->
+    <div class="step-panel active" data-step-panel="1">
+      <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">1. Patient Information</h3>
+      <div class="grid">
+        <div class="full"><label for="file">Patient File Number</label><div class="scan"><input id="file" value="UNKNOWN" placeholder="Enter or scan patient file number"><button type="button" onclick="focusId('file')">SCAN</button></div><div class="field-error" id="err_file"></div></div>
+        <div><label for="name">Patient Name</label><input id="name" value="UNKNOWN" placeholder="Enter patient name"><div class="field-error" id="err_name"></div></div>
+        <div><label for="age">Patient Age</label><input id="age" type="number" min="0" max="120" placeholder="Enter age"></div>
+        <div><label for="sex">Sex</label><select id="sex"><option value="UNKNOWN">Unknown</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+        <div><label for="pg">Patient Blood Group</label><select id="pg"><option>UNKNOWN</option><option>O POS</option><option>O NEG</option><option>A POS</option><option>A NEG</option><option>B POS</option><option>B NEG</option><option>AB POS</option><option>AB NEG</option></select></div>
+        <div><label for="loc">Ward / Location</label><select id="loc"><option>ER</option><option>OR</option><option>ICU</option><option>Ward</option><option>Other</option></select></div>
+      </div>
+      <div class="btn-row"><button type="button" onclick="goReleaseStep(2)">Continue to Release Details</button></div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-panel" data-step-panel="2">
+      <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">2. Release Details</h3>
+      <div class="grid">
+        <div><label for="tech">Technologist ID *</label><input id="tech" required><div class="field-error" id="err_tech"></div></div>
+        <div><label for="releaseType">Release Type *</label><select id="releaseType" onchange="updateReleaseBadge()"><option value="ROUTINE">Routine</option><option value="EMERGENCY" selected>Emergency / Urgent</option></select></div>
+        <div><label for="doctorName">Doctor Name</label><input id="doctorName" placeholder="Enter doctor name"></div>
+        <div><label for="doctorId">Doctor ID</label><input id="doctorId" placeholder="Enter doctor ID"></div>
+        <div><label for="callTime">Call Received Time</label><input id="callTime" type="time"></div>
+        <div><label for="requestedUnits">Doctor Requested Number of Units *</label><input id="requestedUnits" type="number" min="1" max="50" value="1" oninput="renderRequestedUnits();updateUnitProgress()"></div>
+        <div><label for="requestedComp">Requested Blood Component *</label><select id="requestedComp" onchange="renderRequestedUnits();updateUnitProgress()"><option value="PRBC">PRBC</option><option value="PLT">PLT</option><option value="TFFP">TFFP</option><option value="Cryo">Cryo</option></select></div>
+      </div>
+      <div class="btn-row">
+        <button class="secondary" type="button" onclick="goReleaseStep(1)">Back</button>
+        <button type="button" onclick="goReleaseStep(3)">Continue to Blood Units</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-panel" data-step-panel="3">
+      <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">3. Blood Unit Entry and Verification</h3>
+      <div class="alert" style="margin-bottom:12px"><b>Requested:</b> <span id="requestSummary">1 × PRBC</span><br><span style="font-size:12px">Enter/scan each unit number. Compatibility type must be selected from approved results — barcode scan does not set compatibility.</span></div>
+      <div id="requestedUnitsList"></div>
+      <div class="card" style="margin-top:14px;box-shadow:none"><h2>Units for This Issue</h2><div class="body">
+        <div id="unitList" class="empty-state">No units added yet.</div>
+        <div class="btn-row">
+          <button type="button" onclick="addRequestedUnitsToIssue();updateUnitProgress();">Add All Requested Units to Issue</button>
+          <button class="secondary" type="button" onclick="clearIssueUnits();updateUnitProgress();">Clear Units</button>
+        </div>
+      </div></div>
+      <div class="btn-row">
+        <button class="secondary" type="button" onclick="goReleaseStep(2)">Back</button>
+        <button type="button" onclick="goReleaseStep(4)">Continue to Review</button>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-panel" data-step-panel="4">
+      <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">4. Review and Document Generation</h3>
+      <div id="reviewSummary" class="review-grid" style="margin-bottom:14px"></div>
+      <div class="alert warn" style="margin-bottom:14px">Confirm patient identity, unit numbers, and compatibility selections before generating documents. Tag print (Zebra 2.71 × 5.13 in) and A4 Issue Report print are separate.</div>
+      <div class="btn-row">
+        <button class="secondary" type="button" onclick="goReleaseStep(3)">Back</button>
+        <button type="button" onclick="generate()">Generate Compatibility Tag</button>
+        <button class="printbtn" type="button" onclick="printAllTagsDirect()">Print All Tags — Zebra</button>
+        <button class="secondary" type="button" onclick="issueReportView();show('issueReport',document.querySelectorAll('.nav button')[3])">Open Issue Report</button>
+        <button class="secondary" type="button" onclick="clearForm();goReleaseStep(1)">Clear Form</button>
+      </div>
+    </div>
+
+    <div id="msg" class="message no-print" style="margin-top:14px">READY — ENTER PATIENT AND BLOOD UNIT INFORMATION</div>
+  </div></div>
 </section>
 
 <section id="tagPage" class="page">
   <div class="no-print" style="font-size:11px;color:#666;margin-top:7px">
 <strong>Print settings:</strong> Tag → select Zebra GK420t and 2.71 × 5.13 in stock. Issue Report → select your A4 printer and A4 Portrait. Emergency Release Report adds the emergency declaration; Routine Issue Report does not.
-</div><div class="actions no-print"><button class="printbtn" onclick="printCurrentPreviewTag()">Print Current Tag — Zebra</button><button class="printbtn" onclick="printAllTagsDirect()">Print All Added Tags — One Print Job</button><button class="secondary" onclick="show('new',document.querySelector('.nav button'))">Back</button></div>
+</div><div class="actions no-print"><button class="printbtn" onclick="printCurrentPreviewTag()">Print Current Tag — Zebra</button><button class="printbtn" onclick="printAllTagsDirect()">Print All Added Tags — One Print Job</button><button class="secondary" onclick="show('new',document.querySelector('.nav button[onclick*=\"new\"]'))">Back</button></div>
   <div id="tagPreviewList"></div>
 </section>
 
 <section id="history" class="page">
   <div class="card"><h2>Tag History</h2><div class="body">
-    <div class="filterbar no-print"><input id="histSearch" placeholder="Search patient, file, unit, technologist" oninput="historyView()"><select id="histType" onchange="historyView()"><option value="ALL">All Types</option><option value="ROUTINE">Routine</option><option value="EMERGENCY">Emergency</option></select><button class="secondary" onclick="exportHistoryCSV()">Export CSV</button></div>
-    <div id="historyList">No records yet.</div>
+    <div class="filterbar no-print"><input id="histSearch" placeholder="Search patient, file, unit, technologist" oninput="historyView()"><input id="histDate" type="date" onchange="historyView()" title="Filter by date"><select id="histType" onchange="historyView()"><option value="ALL">All Types</option><option value="ROUTINE">Routine</option><option value="EMERGENCY">Emergency</option></select><button class="secondary" onclick="exportHistoryCSV()">Export CSV</button></div>
+    <div id="historyList" class="empty-state">No records yet.</div>
   </div></div>
 </section>
 
 <section id="audit" class="page">
-  <div class="card"><h2>Audit Trail</h2><div class="body"><div class="filterbar no-print"><input id="auditSearch" placeholder="Search audit trail" oninput="auditView()"><button class="secondary" onclick="exportAuditCSV()">Export CSV</button></div><div id="auditList">No audit records yet.</div></div></div>
+  <div class="card"><h2>Audit Trail</h2><div class="body"><div class="filterbar no-print"><input id="auditSearch" placeholder="Search audit trail" oninput="auditView()"><button class="secondary" onclick="exportAuditCSV()">Export CSV</button></div><div id="auditList" class="empty-state">No audit records yet.</div></div></div>
 </section>
 
 <section id="issueReport" class="page">
-<div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new',document.querySelector('.nav button'))">Back</button></div>
+<div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new',document.querySelector('.nav button[onclick*=\"new\"]'))">Back</button></div>
 <div class="card"><div class="body"><div id="issuePrint" class="issue-report">
 <div class="ir-header"><div><div class="ir-title">BLOOD BANK</div><div class="ir-subtitle">BLOOD ISSUE REPORT</div></div></div>
 <div class="ir-patient">
@@ -519,7 +619,7 @@ async function loadServerHistory(opts={}){
   }
 }
 function focusId(id){$(id).focus()}
-function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='history')historyView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView();if(id==='users')usersView()}
+function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='history')historyView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView();if(id==='users')usersView();if(id==='new'){updateReleaseBadge();updateUnitProgress();if(releaseStep===4)renderReviewSummary();}}
 function renderUsers(users){
   const list=$('usersList'), sel=$('pwUsername');
   if(!list) return;
@@ -578,6 +678,87 @@ const COMP_LABEL={PRBC:'PRBC',PLT:'PLT',TFFP:'TFFP',Cryo:'Cryo'};
 const STATUS_LABEL={UNCROSSMATCH:'Uncrossmatch',COMPATIBLE:'Compatible','PARTIAL COMPATIBLE':'Partial crossmatch','TYPE SPECIFIC':'Type specific','NON TYPE SPECIFIC':'Non type specific'};
 function getIssueUnits(){return JSON.parse(sessionStorage.getItem('issueUnits')||'[]')}
 function setIssueUnits(a){sessionStorage.setItem('issueUnits',JSON.stringify(a));renderUnitList();renderTagPreviews()}
+
+let releaseStep=1;
+function updateReleaseBadge(){
+  const t=$('releaseType')?.value||'EMERGENCY';
+  const b=$('releaseTypeBadge'); if(!b) return;
+  b.textContent=t==='EMERGENCY'?'Emergency':'Routine';
+  b.className='badge '+(t==='EMERGENCY'?'warn':'info');
+}
+function updateUnitProgress(){
+  const need=Math.max(1,Math.min(50,parseInt($('requestedUnits')?.value||'1',10)||1));
+  const filled=[...document.querySelectorAll('.req-unit')].filter(i=>i.value.trim()).length;
+  const added=getIssueUnits().length;
+  const el=$('unitProgress');
+  if(el) el.textContent=`Unit fields filled: ${filled} / ${need} · On issue list: ${added}`;
+}
+function setFieldError(id,msg){
+  const input=$(id); const err=$('err_'+id);
+  if(input) input.classList.toggle('is-invalid',!!msg);
+  if(err){ err.textContent=msg||''; err.classList.toggle('show',!!msg); }
+}
+function validateLeavingStep(fromStep){
+  setFieldError('file',''); setFieldError('name',''); setFieldError('tech','');
+  if(fromStep===2){
+    if(!$('tech').value.trim()){ setFieldError('tech','Technologist ID is required.'); $('tech').focus(); return false; }
+  }
+  if(fromStep===3){
+    const rows=collectRequestedUnits();
+    const missing=rows.map((x,i)=>!x.unit?i+1:null).filter(Boolean);
+    if(missing.length){ alert('Enter or scan the Blood Unit Number for Unit '+missing.join(', Unit ')+'.'); return false; }
+  }
+  return true;
+}
+function renderReviewSummary(){
+  const host=$('reviewSummary'); if(!host) return;
+  const units=getIssueUnits();
+  const type=$('releaseType')?.value||'ROUTINE';
+  host.innerHTML=`
+    <div class="kv"><span>Patient</span><b>${($('name').value.trim()||'—')}</b></div>
+    <div class="kv"><span>File Number</span><b>${($('file').value.trim()||'—')}</b></div>
+    <div class="kv"><span>Age / Sex</span><b>${($('age').value||'—')} / ${($('sex').value||'—')}</b></div>
+    <div class="kv"><span>Blood Group</span><b>${($('pg').value||'—')}</b></div>
+    <div class="kv"><span>Location</span><b>${($('loc').value||'—')}</b></div>
+    <div class="kv"><span>Technologist</span><b>${($('tech').value.trim()||'—')}</b></div>
+    <div class="kv"><span>Release Type</span><b>${type}</b></div>
+    <div class="kv"><span>Doctor</span><b>${(($('doctorName').value.trim()||'—')+' / '+($('doctorId').value.trim()||'—'))}</b></div>
+    <div class="kv full"><span>Units on this issue (${units.length})</span><b>${units.length?units.map(u=>`${u.unit} · ${u.comp} · ${u.dg} · ${u.status}`).join('<br>'):'None'}</b></div>`;
+}
+function goReleaseStep(step){
+  step=Math.max(1,Math.min(4,step|0));
+  if(step>releaseStep){
+    // Validate the step being left before advancing.
+    for(let s=releaseStep;s<step;s++){
+      if(!validateLeavingStep(s)) return;
+    }
+  }
+  if(step===4) renderReviewSummary();
+  releaseStep=step;
+  document.querySelectorAll('#releaseStepper li').forEach(li=>{
+    const n=parseInt(li.getAttribute('data-step'),10);
+    li.classList.toggle('active',n===step);
+    li.classList.toggle('done',n<step);
+  });
+  document.querySelectorAll('.step-panel').forEach(p=>{
+    p.classList.toggle('active', parseInt(p.getAttribute('data-step-panel'),10)===step);
+  });
+  updateReleaseBadge(); updateUnitProgress();
+  const tip=$('stepMsg');
+  if(tip){
+    tip.className='alert info';
+    tip.textContent={
+      1:'Identify the patient clearly. File number and name default to UNKNOWN only when unavailable.',
+      2:'Capture release context. Technologist ID is required before documents can be generated.',
+      3:'Enter or scan unit numbers. Do not infer compatibility from the barcode — select the approved result.',
+      4:'Review all fields, then generate tags and print documents on the correct pathway.'
+    }[step]||tip.textContent;
+  }
+  if(step===1) $('file')?.focus();
+  if(step===2) $('tech')?.focus();
+  if(step===3){ const first=document.querySelector('.req-unit'); if(first) first.focus(); }
+}
+
 function renderRequestedUnits(){
   const n=Math.max(1,Math.min(50,parseInt($('requestedUnits')?.value||'1',10)||1));
   const comp=COMP_LABEL[$('requestedComp')?.value]||$('requestedComp')?.value||'PRBC';
@@ -591,6 +772,19 @@ function renderRequestedUnits(){
     <div><label>Expiry Date</label><input class="req-exp" type="date" value="${x.exp||''}"></div>
     <div><label>Type of Compatibility *</label><select class="req-status">${['UNCROSSMATCH','COMPATIBLE','PARTIAL COMPATIBLE','TYPE SPECIFIC','NON TYPE SPECIFIC'].map(v=>`<option value="${v}" ${v===(x.status||'UNCROSSMATCH')?'selected':''}>${STATUS_LABEL[v]}</option>`).join('')}</select></div>
     </div></div>`}).join('');
+  host.querySelectorAll('.req-unit').forEach((inp,idx,arr)=>{
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){
+        e.preventDefault();
+        updateUnitProgress();
+        const next=arr[idx+1];
+        if(next) next.focus();
+      }
+    });
+    inp.addEventListener('change',updateUnitProgress);
+    inp.addEventListener('input',updateUnitProgress);
+  });
+  updateUnitProgress();
 }
 function collectRequestedUnits(){
   const comp=COMP_LABEL[$('requestedComp').value]||$('requestedComp').value;
@@ -649,7 +843,7 @@ async function printTagByIndex(i){
   try{
     const r=await fetch(printAgentUrl()+'/print/tag-bitmap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildTagBitmap(tagDataForUnit(x)))});
     const j=await r.json(); if(!r.ok||!j.ok) throw new Error(j.error||'Direct print failed');
-    $('msg').className='message no-print'; $('msg').textContent='✓ TAG '+(i+1)+' SENT TO ZDESIGNER GK420T'; addAudit('TAG_PRINT', x);
+    $('msg').className='message no-print'; $('msg').textContent='✓ TAG '+(i+1)+' SENT TO ZDESIGNER GK420T'; addAudit('PRINT_ATTEMPT', Object.assign({},x,{details:'Zebra tag print requested'})); addAudit('PRINT_OK', Object.assign({},x,{details:'Print agent accepted tag job'}));
     return true;
   }catch(e){alert('Direct Zebra printing failed.\n\n'+e.message+'\n\nMake sure the Print Agent is running on this PC.');return false;}
 }
@@ -661,7 +855,7 @@ function printCurrentPreviewTag(){
 function renderUnitList(){const a=getIssueUnits();$('unitList').innerHTML=a.length?'<table class="hist"><tr><th>#</th><th>Unit</th><th>Component</th><th>Donor Group</th><th>Compatibility</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${x.status}</td><td><button class="secondary" onclick="removeIssueUnit(${i})">Remove</button></td></tr>`).join('')+'</table>':'No units added yet.'}
 function generate(){
   const req=[['tech','Technologist ID']]; const m=req.filter(x=>!$(x[0]).value.trim());
-  if(m.length){$('msg').className='message error no-print';$('msg').textContent='REQUIRED: '+m.map(x=>x[1]).join(', ');return}
+  if(m.length){$('msg').className='message error no-print';$('msg').textContent='REQUIRED: '+m.map(x=>x[1]).join(', '); setFieldError('tech','Technologist ID is required.'); goReleaseStep(2); return}
   const rows=collectRequestedUnits(); if(!rows.length){alert('Add at least one requested unit.');return}
   const missing=rows.map((x,i)=>!x.unit?i+1:null).filter(Boolean); if(missing.length){alert('Enter or scan the Blood Unit Number for Unit '+missing.join(', Unit ')+'.');return}
   for(const x of rows){if(x.exp&&x.exp<new Date().toISOString().slice(0,10)){if(!confirm('The selected expiry date for one or more units has passed. Continue only if this is a controlled test case?'))return;break}}
@@ -670,12 +864,13 @@ function generate(){
   setIssueUnits(merged);
   $('msg').className='message no-print';
   $('msg').textContent='✓ '+rows.length+' TAG(S) GENERATED — ISSUE REPORT READY';
+  addAudit('DOCUMENT_GENERATED',{details:rows.length+' tag(s) generated',releaseType:$('releaseType')?.value||'ROUTINE'});
   renderTagPreviews();
-  show('tagPage',document.querySelectorAll('.nav button')[1]);
+  show('tagPage', document.querySelector('.nav button[onclick*="tagPage"]') || document.querySelectorAll('.nav button')[2]);
 }
-function clearForm(){document.querySelectorAll('#new input').forEach(i=>i.value='');$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value='';renderRequestedUnits();}
+function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value='';$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}
 function getHistory(){try{const a=JSON.parse(localStorage.getItem('ctags')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
-function historyView(){const a=getHistory(),q=($('histSearch')?.value||'').toLowerCase(),type=$('histType')?.value||'ALL';const f=a.filter(x=>(type==='ALL'||(x.releaseType||'ROUTINE')===type)&&(!q||Object.values(x).join(' ').toLowerCase().includes(q)));$('historyList').innerHTML=f.length?'<table class="hist"><tr><th>Time</th><th>Patient</th><th>File</th><th>Age</th><th>Sex</th><th>Doctor</th><th>Call Time</th><th>Unit</th><th>Component</th><th>Status</th><th>Type</th><th>Tech</th></tr>'+f.map(x=>`<tr><td>${x.time||'—'}</td><td>${x.name||'—'}</td><td>${x.file||'—'}</td><td>${x.age||'—'}</td><td>${x.sex||'—'}</td><td>${(x.doctorName||'—')+(x.doctorId&&x.doctorId!=='—'?' / '+x.doctorId:'')}</td><td>${x.callTime||'—'}</td><td>${x.unit||'—'}</td><td>${x.comp||'—'}</td><td>${x.status||'—'}</td><td>${x.releaseType||'ROUTINE'}</td><td>${x.tech||'—'}</td></tr>`).join('')+'</table>': 'No matching records.'}
+function historyView(){const a=getHistory(),q=($('histSearch')?.value||'').toLowerCase(),type=$('histType')?.value||'ALL',day=$('histDate')?.value||'';const f=a.filter(x=>(type==='ALL'||(x.releaseType||'ROUTINE')===type)&&(!day||String(x.time||'').slice(0,10)===day)&&(!q||Object.values(x).join(' ').toLowerCase().includes(q)));$('historyList').innerHTML=f.length?'<div class="table-wrap"><table class="hist"><tr><th>Time</th><th>Patient</th><th>File</th><th>Age</th><th>Sex</th><th>Doctor</th><th>Call Time</th><th>Unit</th><th>Component</th><th>Status</th><th>Type</th><th>Tech</th></tr>'+f.map(x=>`<tr><td>${x.time||'—'}</td><td>${x.name||'—'}</td><td>${x.file||'—'}</td><td>${x.age||'—'}</td><td>${x.sex||'—'}</td><td>${(x.doctorName||'—')+(x.doctorId&&x.doctorId!=='—'?' / '+x.doctorId:'')}</td><td>${x.callTime||'—'}</td><td>${x.unit||'—'}</td><td>${x.comp||'—'}</td><td>${x.status||'—'}</td><td>${x.releaseType||'ROUTINE'}</td><td>${x.tech||'—'}</td></tr>`).join('')+'</table></div>':'<div class="empty-state">No matching records.</div>'}
 function auditView(){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]')}catch(e){}const q=($('auditSearch')?.value||'').toLowerCase();const f=a.filter(x=>!q||Object.values(x).join(' ').toLowerCase().includes(q));$('auditList').innerHTML=f.length?'<table class="hist"><tr><th>Time</th><th>Action</th><th>User</th><th>Patient</th><th>File</th><th>Age</th><th>Sex</th><th>Unit</th><th>Type</th></tr>'+f.map(x=>`<tr><td>${x.time}</td><td>${x.action}</td><td>${x.user}</td><td>${x.patient}</td><td>${x.file}</td><td>${x.age||'—'}</td><td>${x.sex||'—'}</td><td>${x.unit}</td><td>${x.releaseType}</td></tr>`).join('')+'</table>':'No audit records yet.'}
 function dashboardView(){const a=getHistory(),d=now().slice(0,10);$('total').textContent=a.length;$('today').textContent=a.filter(x=>String(x.time||'').slice(0,10)===d).length;$('units').textContent=new Set(a.map(x=>x.unit).filter(Boolean)).size;$('emergencyCount').textContent=a.filter(x=>(x.releaseType||'ROUTINE')==='EMERGENCY').length;$('routineCount').textContent=a.filter(x=>(x.releaseType||'ROUTINE')==='ROUTINE').length;$('patientCount').textContent=new Set(a.map(x=>x.file).filter(x=>x&&x!=='—')).size;const counts=(key)=>{const m={};a.forEach(x=>{const k=x[key]||'—';m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><b>${v}</b></div>`).join('')||'—'};const ageGroup=(age)=>{const n=parseInt(age,10);if(!Number.isFinite(n))return 'Unknown';if(n<1)return '<1';if(n<=12)return '1–12';if(n<=17)return '13–17';if(n<=29)return '18–29';if(n<=44)return '30–44';if(n<=59)return '45–59';return '60+'};const ageCounts={};a.forEach(x=>{const k=ageGroup(x.age);ageCounts[k]=(ageCounts[k]||0)+1});const ageHtml=Object.entries(ageCounts).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><b>${v}</b></div>`).join('')||'—';$('componentStats').innerHTML=counts('comp');$('groupStats').innerHTML=counts('dg');$('sexStats').innerHTML=counts('sex');$('ageStats').innerHTML=ageHtml;$('techStats').innerHTML=counts('tech')}
 function exportHistoryCSV(){const a=getHistory();downloadCSV(a,'blood_release_history.csv')}
@@ -816,7 +1011,7 @@ function printTagFromCenter(){
 function printIssueFromCenter(emergency=false){
   if(!getIssueUnits().length){alert('Add at least one blood unit before printing the Issue Report.');return}
   issueReportView();
-  addAudit('ISSUE_REPORT_PRINT', {releaseType: emergency?'EMERGENCY':'ROUTINE', details:'A4 issue report printed'});
+  addAudit('PRINT_ATTEMPT', {releaseType: emergency?'EMERGENCY':'ROUTINE', details:'A4 issue report print requested'});
   $('issuePrint').classList.toggle('emergency-mode',!!emergency);
   show('issueReport',document.querySelectorAll('.nav button')[3]);
   document.body.classList.remove('print-tag');
@@ -839,7 +1034,7 @@ function printIssueReport(emergency=false){
 window.addEventListener('afterprint',()=>{
   document.body.classList.remove('print-tag','print-issue'); $('issuePrint').classList.remove('emergency-mode');
 });
-$('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();
+$('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);
 if($('printAgentUrl')) $('printAgentUrl').value=getPrintAgentUrl();
 bindLogoutButtons();
 applyAdminUI();

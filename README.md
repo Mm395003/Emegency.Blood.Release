@@ -1,44 +1,31 @@
 # Emergency Blood Release
 
-Blood bank compatibility tag and emergency issue report tool, with shared history login.
-
-## Login (fixed)
-
-The app needs the API server for sign-in. A default admin is created automatically when the user list is empty:
-
-- **Username:** `admin`
-- **Password:** `admin123`
-
-Change this password after first login (Users → Change Password).
+Clinical blood bank tool for compatibility tags (Zebra 2.71 × 5.13 in) and A4 Blood Issue Reports (Routine / Emergency).
 
 ## Run locally
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
 pip install -r requirements.txt
-python server.py
+python3 -m uvicorn server:app --host 127.0.0.1 --port 43147
 ```
 
-Open [http://127.0.0.1:43147/](http://127.0.0.1:43147/)
+Open http://127.0.0.1:43147/
 
-Optional env vars:
+Default admin (change after first login): `admin` / `admin123`
 
-- `BLOOD_ADMIN_USER` — seed admin username (default `admin`)
-- `BLOOD_ADMIN_PASSWORD` — seed admin password (default `admin123`)
-- `BLOOD_DATA_DIR` — where users/history JSON is stored (default `./data`)
-- `PORT` — server port (default `43147`)
+## Tests
 
-## Why login failed on the old Vercel site
+```bash
+pip install -r requirements.txt pytest httpx
+pytest -q
+```
 
-The live site required login, but:
+## Docs
 
-1. There was no seeded admin user
-2. Creating users required an admin session first
-3. Local/serverless storage could start empty, so every login returned “Invalid username or password”
+- `docs/AUDIT.md` — Phase 1 audit & risk register
+- `docs/DEPLOYMENT.md` — deploy / rollback
+- `docs/SECURITY.md` — security findings
 
-This repo seeds an admin on first start so login works.
+## Constraints
 
-## Print agent (Windows)
-
-See `README_V69.txt` and `BUILD_PrintAgent.bat` for the Zebra print agent.
+Tag size, Zebra direct print pathway, A4 issue reports, and clinical compatibility entry rules are preserved. See the UI/UX modernization specification.
