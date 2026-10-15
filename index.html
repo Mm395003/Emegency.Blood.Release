@@ -416,26 +416,50 @@ function showUsersMsg(text,ok){
 }
 function getPrintAgentUrl(){try{return (localStorage.getItem(PRINT_URL_KEY)||'http://127.0.0.1:8770').replace(/\/$/,'')}catch(e){return 'http://127.0.0.1:8770'}}
 function savePrintAgentUrl(){const v=($('printAgentUrl')?.value||'').trim().replace(/\/$/,'')||'http://127.0.0.1:8770';try{localStorage.setItem(PRINT_URL_KEY,v)}catch(e){}$('printAgentUrl').value=v;checkZebraAgent()}
+let loginInFlight=false;
+let historyLoadSeq=0;
 async function api(path,options={}){
   const headers={...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})};
   const tok=getToken(); if(tok) headers.Authorization='Bearer '+tok;
-  const res=await fetch(API_URL+path,{...options,headers});
+  const res=await fetch(API_URL+path,{...options,headers,cache:'no-store'});
   const data=await res.json().catch(()=>({}));
-  if(!res.ok){const d=data.detail; throw new Error(typeof d==='string'?d:(d&&d.msg)||data.error||('request_failed:'+path));}
+  if(!res.ok){
+    const d=data.detail;
+    const err=new Error(typeof d==='string'?d:(d&&d.msg)||data.error||('request_failed:'+path));
+    err.status=res.status;
+    throw err;
+  }
   return data;
 }
+function setLoginBusy(busy){
+  loginInFlight=!!busy;
+  const btn=$('loginForm')?.querySelector('button[type="submit"]');
+  if(btn){ btn.disabled=!!busy; btn.textContent=busy?'Signing in…':'Sign in'; }
+  if($('loginUser')) $('loginUser').disabled=!!busy;
+  if($('loginPass')) $('loginPass').disabled=!!busy;
+}
 async function doLogin(){
+  if(loginInFlight) return;
   const username=$('loginUser').value.trim(), password=$('loginPass').value;
+  if(!username||!password){
+    $('loginErr').style.display='block';
+    $('loginErr').textContent='Enter username and password.';
+    return;
+  }
+  setLoginBusy(true);
+  $('loginErr').style.display='none';
+  // Cancel any page-load history sync that could race and reopen the overlay.
+  const mySeq=++historyLoadSeq;
   try{
-    $('loginErr').style.display='none';
     const data=await api('/api/login',{method:'POST',body:JSON.stringify({username,password})});
-    if(data.session_token) localStorage.setItem(TOKEN_KEY,data.session_token);
+    if(!data.session_token) throw new Error('Login failed: no session token');
+    localStorage.setItem(TOKEN_KEY,data.session_token);
     if(data.user) localStorage.setItem(USER_KEY,JSON.stringify(data.user));
     $('loginOverlay').style.display='none';
     $('serverStatus').className='message no-print';
     $('serverStatus').textContent='✓ Connected to server as '+(data.user&&data.user.username||username);
     applyAdminUI();
-    await loadServerHistory();
+    await loadServerHistory({keepSessionOnError:true,seq:mySeq});
   }catch(e){
     $('loginErr').style.display='block';
     const msg=String(e.message||'Login failed');
@@ -446,30 +470,52 @@ async function doLogin(){
     }else{
       $('loginErr').textContent=msg;
     }
+  }finally{
+    setLoginBusy(false);
   }
 }
-async function loadServerHistory(){
-  if(!getToken()){ $('loginOverlay').style.display='flex'; $('serverStatus').className='message error no-print'; $('serverStatus').textContent='Sign in to save history on the server.'; return; }
+async function loadServerHistory(opts={}){
+  const keepSessionOnError=!!opts.keepSessionOnError;
+  const seq=opts.seq||++historyLoadSeq;
+  if(!getToken()){
+    $('loginOverlay').style.display='flex';
+    $('serverStatus').className='message error no-print';
+    $('serverStatus').textContent='Sign in to save history on the server.';
+    return;
+  }
   try{
     const localHist=getHistory();
     const localAudit=(()=>{try{const a=JSON.parse(localStorage.getItem('auditTrail')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}})();
     const [h,a]=await Promise.all([api('/api/history'),api('/api/audit')]);
+    if(seq!==historyLoadSeq) return;
     if((!h.records||!h.records.length)&&localHist.length){ await api('/api/history',{method:'POST',body:JSON.stringify({records:localHist})}); }
+    if(seq!==historyLoadSeq) return;
     if((!a.records||!a.records.length)&&localAudit.length){ await api('/api/audit',{method:'POST',body:JSON.stringify({records:localAudit})}); }
+    if(seq!==historyLoadSeq) return;
     const freshH=(!h.records||!h.records.length)&&localHist.length ? await api('/api/history') : h;
     const freshA=(!a.records||!a.records.length)&&localAudit.length ? await api('/api/audit') : a;
+    if(seq!==historyLoadSeq) return;
     if(Array.isArray(freshH.records)) localStorage.setItem('ctags',JSON.stringify(freshH.records));
     if(Array.isArray(freshA.records)) localStorage.setItem('auditTrail',JSON.stringify(freshA.records));
     try{const me=await api('/api/me'); if(me.user) localStorage.setItem(USER_KEY,JSON.stringify(me.user))}catch(err){}
+    if(seq!==historyLoadSeq) return;
     applyAdminUI();
     historyView(); auditView(); dashboardView();
     $('serverStatus').className='message no-print';
     $('serverStatus').textContent='✓ History connected to the server';
   }catch(e){
+    if(seq!==historyLoadSeq) return;
     const msg=String(e.message||'');
-    if(/log in|session|401/i.test(msg)){ try{localStorage.removeItem(TOKEN_KEY)}catch(err){} $('loginOverlay').style.display='flex'; }
+    const unauthorized=(e&&e.status===401)||/^please log in$/i.test(msg);
+    if(unauthorized && !keepSessionOnError){
+      try{localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY)}catch(err){}
+      applyAdminUI();
+      $('loginOverlay').style.display='flex';
+    }
     $('serverStatus').className='message error no-print';
-    $('serverStatus').textContent='Could not load history from server. '+msg;
+    $('serverStatus').textContent=unauthorized&&!keepSessionOnError
+      ? 'Sign in to save history on the server.'
+      : ('Signed in. History sync issue: '+msg);
   }
 }
 function focusId(id){$(id).focus()}
@@ -795,10 +841,16 @@ window.addEventListener('afterprint',()=>{
 });
 $('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();
 if($('printAgentUrl')) $('printAgentUrl').value=getPrintAgentUrl();
-if($('loginPass')) $('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doLogin();}});
+bindLogoutButtons();
 applyAdminUI();
 checkZebraAgent();
-loadServerHistory();
+if(getToken()){
+  loadServerHistory();
+}else{
+  $('loginOverlay').style.display='flex';
+  $('serverStatus').className='message error no-print';
+  $('serverStatus').textContent='Sign in to save history on the server.';
+}
 document.addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('callTime');if(el&&!el.value){const d=new Date();el.value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}});
 </script>
 </body></html>

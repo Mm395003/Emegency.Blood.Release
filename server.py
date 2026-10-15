@@ -2,19 +2,20 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import hmac
 import json
 import os
 import secrets
 import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parent
@@ -28,7 +29,12 @@ AUDIT_FILE = DATA_DIR / "audit.json"
 
 DEFAULT_ADMIN_USER = os.environ.get("BLOOD_ADMIN_USER", "admin")
 DEFAULT_ADMIN_PASS = os.environ.get("BLOOD_ADMIN_PASSWORD", "admin123")
-SESSION_TTL_NOTE = "session"
+# Signed tokens work across serverless instances (no shared session file required).
+TOKEN_SECRET = os.environ.get("BLOOD_TOKEN_SECRET") or os.environ.get(
+    "SECRET_KEY", "blood-release-dev-secret-change-me"
+)
+TOKEN_TTL_SEC = int(os.environ.get("BLOOD_TOKEN_TTL_SEC", str(60 * 60 * 24 * 30)))
+PBKDF2_ITERS = int(os.environ.get("BLOOD_PBKDF2_ITERS", "60000"))
 
 _lock = threading.Lock()
 
@@ -59,10 +65,19 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 
+def _b64url(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
+
+
+def _b64url_decode(data: str) -> bytes:
+    pad = "=" * (-len(data) % 4)
+    return base64.urlsafe_b64decode((data + pad).encode("ascii"))
+
+
 def _hash_password(password: str, salt: str | None = None) -> str:
     salt = salt or secrets.token_hex(8)
     digest = hashlib.pbkdf2_hmac(
-        "sha256", password.encode("utf-8"), salt.encode("utf-8"), 120_000
+        "sha256", password.encode("utf-8"), salt.encode("utf-8"), PBKDF2_ITERS
     ).hex()
     return f"{salt}${digest}"
 
@@ -72,10 +87,52 @@ def _verify_password(password: str, stored: str) -> bool:
         salt, digest = stored.split("$", 1)
     except ValueError:
         return False
-    check = hashlib.pbkdf2_hmac(
-        "sha256", password.encode("utf-8"), salt.encode("utf-8"), 120_000
-    ).hex()
-    return hmac.compare_digest(check, digest)
+    # Accept both current and legacy iteration counts so old hashes still work.
+    for iters in {PBKDF2_ITERS, 120_000, 60_000}:
+        check = hashlib.pbkdf2_hmac(
+            "sha256", password.encode("utf-8"), salt.encode("utf-8"), iters
+        ).hex()
+        if hmac.compare_digest(check, digest):
+            return True
+    return False
+
+
+def _issue_token(user: dict[str, Any]) -> str:
+    payload = {
+        "u": user.get("username"),
+        "r": user.get("role", "user"),
+        "c": user.get("created_at", "—"),
+        "exp": int(time.time()) + TOKEN_TTL_SEC,
+        "iat": int(time.time()),
+    }
+    body = _b64url(json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8"))
+    sig = _b64url(hmac.new(TOKEN_SECRET.encode("utf-8"), body.encode("ascii"), hashlib.sha256).digest())
+    return f"v1.{body}.{sig}"
+
+
+def _verify_token(token: str) -> dict[str, Any] | None:
+    try:
+        kind, body, sig = token.split(".", 2)
+        if kind != "v1":
+            return None
+        expected = _b64url(
+            hmac.new(TOKEN_SECRET.encode("utf-8"), body.encode("ascii"), hashlib.sha256).digest()
+        )
+        if not hmac.compare_digest(sig, expected):
+            return None
+        payload = json.loads(_b64url_decode(body).decode("utf-8"))
+        if int(payload.get("exp", 0)) < int(time.time()):
+            return None
+        username = str(payload.get("u") or "").strip()
+        if not username:
+            return None
+        return {
+            "username": username,
+            "role": payload.get("r", "user"),
+            "created_at": payload.get("c", "—"),
+        }
+    except Exception:
+        return None
 
 
 def _read_json(path: Path, default: Any) -> Any:
@@ -152,6 +209,25 @@ def current_user(authorization: str | None = Header(default=None)) -> dict[str, 
     token = authorization.split(" ", 1)[1].strip()
     if not token:
         raise HTTPException(status_code=401, detail="Please log in")
+
+    # Preferred path: signed token (works on multi-instance / serverless hosts).
+    verified = _verify_token(token)
+    if verified:
+        with _lock:
+            users = _get_users()
+            user = next((u for u in users if u.get("username") == verified["username"]), None)
+            if user:
+                return _public_user(user)
+        # Fresh instance may have an empty users file; reseed then re-check.
+        ensure_seed_admin()
+        with _lock:
+            users = _get_users()
+            user = next((u for u in users if u.get("username") == verified["username"]), None)
+            if user:
+                return _public_user(user)
+        return verified
+
+    # Legacy fallback: opaque server-side sessions.
     with _lock:
         sessions = _get_sessions()
         sess = sessions.get(token)
@@ -218,15 +294,9 @@ def login(body: LoginRequest) -> dict[str, Any]:
         )
         if not user or not _verify_password(password, user.get("password_hash", "")):
             raise HTTPException(status_code=401, detail="Invalid username or password")
-        token = secrets.token_urlsafe(32)
-        sessions = _get_sessions()
-        sessions[token] = {
-            "username": user["username"],
-            "created_at": _now_iso(),
-            "note": SESSION_TTL_NOTE,
-        }
-        _save_sessions(sessions)
-        return {"session_token": token, "user": _public_user(user)}
+        public = _public_user(user)
+        token = _issue_token(user)
+        return {"session_token": token, "user": public}
 
 
 @app.get("/api/me")
