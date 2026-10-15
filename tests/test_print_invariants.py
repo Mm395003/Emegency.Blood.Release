@@ -55,7 +55,8 @@ def test_homepage_hero_and_three_cards():
     assert "Emergency Blood Release" in home
     assert "Every Second Matters. Every Unit Counts." in home
     assert home.count('class="action-card') == 3
-    assert "show('new')" in home and "show('tagPage')" in home and "show('issueReport')" in home
+    assert "show('new')" in home and "show('history')" in home and "show('dashboard')" in home
+    assert "show('tagPage')" not in home and "show('issueReport')" not in home
     after_slogan = home.split("Every Second Matters. Every Unit Counts.</p>", 1)[1]
     assert not re.search(r"<p[\s>]", after_slogan)
     assert "<img" not in home
