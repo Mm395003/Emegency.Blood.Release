@@ -1,11 +1,15 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Emergency Blood Release</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   /* Clinical design system — screen chrome (print/tag styles stay high-contrast black) */
-  --navy:#0f2744;--navy-dark:#0a1b30;--navy-light:#1a3d66;
-  --maroon:#0f2744;--maroon-dark:#0a1b30;--maroon-light:#1a3d66; /* legacy aliases → navy */
-  --ink:#152033;--muted:#5b677a;--line:#d5dbe6;--bg:#f3f5f8;--card:#fff;
+  --crimson:#8E1B2C;--crimson-dark:#741624;
+  --navy:#0E2744;--navy-dark:#081A2E;--navy-light:#1B3F68;
+  --maroon:#0E2744;--maroon-dark:#081A2E;--maroon-light:#1B3F68; /* legacy aliases → navy */
+  --ink:#152033;--muted:#4A596E;--line:#D3DBE6;--bg:#F3F5F8;--card:#FFFFFF;
   --ok-bg:#e8f7ee;--ok-line:#2f8f52;--ok-ink:#1c6b39;
   --err-bg:#fdecee;--err-line:#c23440;--err-ink:#9c1f29;
   --warn-bg:#fff7e8;--warn-line:#c98512;--warn-ink:#8a5a00;
@@ -18,16 +22,20 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased}
 
-.header{height:68px;background:linear-gradient(120deg,var(--maroon-light),var(--maroon-dark));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
-.header .brand{display:flex;flex-direction:column;line-height:1.15}
-.header h1{margin:0;font-size:20px;font-weight:800;letter-spacing:.3px}
-.header .sub{font-size:12px;opacity:.85;letter-spacing:.4px}
-
-.nav{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.nav button{flex:1;border:0;background:transparent;padding:14px 8px;color:var(--muted);font-weight:700;font-size:13.5px;cursor:pointer;position:relative;transition:color .15s}
-.nav button:hover{color:var(--maroon)}
-.nav button.active{color:var(--maroon)}
-.nav button.active:after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--maroon);border-radius:3px 3px 0 0}
+.header{position:relative;z-index:30;min-height:64px;background:var(--crimson);color:#fff;display:flex;align-items:center;gap:20px;padding:0 24px;box-shadow:0 1px 0 rgba(0,0,0,.12)}
+.header .brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;flex-shrink:0;border-radius:8px}
+.brand-logo{width:34px;height:34px;flex:none}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-kicker{font-size:11px;font-weight:700;letter-spacing:.14em;opacity:.85}
+.brand-name{font-size:18px;font-weight:800;letter-spacing:.2px;white-space:nowrap}
+.nav{display:flex;align-items:center;gap:2px;margin-left:auto;min-width:0}
+.nav button{display:inline-flex;align-items:center;gap:7px;border:0;background:transparent;color:#fff;padding:9px 11px;border-radius:8px;font:600 14px var(--font);cursor:pointer;white-space:nowrap;opacity:.92;transition:background .15s,opacity .15s}
+.nav button svg{width:17px;height:17px;flex:none}
+.nav button:hover{background:rgba(255,255,255,.10);opacity:1;filter:none}
+.nav button.active{background:rgba(255,255,255,.18);opacity:1}
+.nav button:focus-visible,.header .brand:focus-visible,.nav-toggle:focus-visible,.logout-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.nav-toggle{display:none;margin-left:auto;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:8px}
+.nav-toggle svg{width:22px;height:22px}
 
 main{max-width:1100px;margin:22px auto;padding:0 16px 40px}
 .page{display:none}.page.active{display:block;animation:fade .18s ease}
@@ -199,18 +207,15 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 .header-userbar{display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative;z-index:20}
 .header-userbar #headerUser{font-size:13px;opacity:.95;text-align:right;white-space:nowrap}
 .logout-btn{
-  padding:8px 14px;font-size:12px;font-weight:800;letter-spacing:.2px;
-  background:#fff;color:var(--maroon-dark);border:0;border-radius:9px;cursor:pointer;
+  padding:8px 14px;font-size:13px;font-weight:700;letter-spacing:.2px;
+  background:#fff;color:var(--crimson);border:0;border-radius:8px;cursor:pointer;
   box-shadow:0 1px 0 rgba(0,0,0,.08);pointer-events:auto;position:relative;z-index:21;
 }
 .logout-btn:hover{filter:brightness(0.97)}
-.nav #logoutNav{color:var(--maroon);position:relative;z-index:11}
 
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap');
 *:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 .app-shell{min-height:100vh;display:flex;flex-direction:column}
-.header{background:linear-gradient(120deg,var(--navy-light),var(--navy-dark))!important}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--ink)}
 .badge.ok{background:var(--ok-bg);border-color:var(--ok-line);color:var(--ok-ink)}
 .badge.warn{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn-ink)}
@@ -244,9 +249,53 @@ input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-sh
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 @media(max-width:700px){.review-grid{grid-template-columns:1fr}.stepper li{min-width:100%}}
 
-@media(max-width:700px){
-  .header{height:auto;min-height:68px;padding:10px 14px;gap:8px;flex-wrap:wrap}
-  .header-userbar{width:100%;justify-content:flex-end}
+/* Homepage */
+.home{position:relative;overflow:hidden;background:#EEF2F7;min-height:calc(100vh - 64px);display:none;align-items:center;justify-content:center;padding:72px 24px 88px}
+.home.active{display:flex}
+body:has(#home.active) main{margin:0;padding:0}
+.home::before,.home::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.home::before{width:1100px;height:1100px;right:-520px;top:-640px;border:70px solid rgba(14,39,68,.035)}
+.home::after{width:900px;height:900px;left:-560px;bottom:-620px;border:60px solid rgba(142,27,44,.035)}
+.home-inner{position:relative;z-index:1;width:100%;max-width:1080px;text-align:center}
+.home-kicker{margin:0 0 10px;font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--crimson)}
+.home-title{margin:0;font-size:clamp(34px,5vw,56px);line-height:1.08;font-weight:800;color:var(--navy);letter-spacing:-.01em}
+.home-slogan{margin:16px 0 0;font-size:clamp(19px,2.4vw,26px);line-height:1.3;font-weight:700;color:var(--ink)}
+.home-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+.action-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:220px;padding:28px;border-radius:16px;border:1px solid var(--line);background:#fff;color:var(--navy);font-family:var(--font);cursor:pointer;box-shadow:0 1px 2px rgba(14,39,68,.05),0 6px 18px rgba(14,39,68,.06);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.action-card:hover{transform:translateY(-3px);border-color:#B9C6D8;box-shadow:0 2px 4px rgba(14,39,68,.06),0 14px 30px rgba(14,39,68,.10);filter:none}
+.action-card:active{transform:translateY(0);box-shadow:0 1px 2px rgba(14,39,68,.08)}
+.action-card:focus-visible{outline:3px solid var(--navy-light);outline-offset:3px}
+.action-card.primary{background:var(--crimson);border-color:var(--crimson);color:#fff}
+.action-card.primary:hover{background:var(--crimson-dark);border-color:var(--crimson-dark)}
+.action-icon{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:14px;background:#EAF0F7;color:var(--navy)}
+.action-card.primary .action-icon{background:rgba(255,255,255,.16);color:#fff}
+.action-icon svg{width:28px;height:28px}
+.action-title{margin-top:22px;font-size:22px;font-weight:700;line-height:1.2}
+.action-desc{margin-top:8px;font-size:15px;line-height:1.45;font-weight:400;color:var(--muted)}
+.action-card.primary .action-desc{color:rgba(255,255,255,.88)}
+.action-arrow{position:absolute;right:24px;bottom:24px;width:24px;height:24px}
+
+@media(max-width:1240px){.header-userbar #headerUser{display:none}}
+@media(max-width:1100px){
+  .header{flex-wrap:wrap;row-gap:0;padding:8px 20px 0}
+  .header .brand{min-height:48px}
+  .header-userbar{margin-left:auto}
+  .nav{order:3;width:100%;margin:0 -8px;padding:4px 0 8px;overflow-x:auto;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+}
+@media(max-width:900px){.home-actions{gap:16px}.action-card{padding:22px;min-height:200px}}
+@media(max-width:760px){
+  .header{flex-wrap:wrap;padding:8px 16px}
+  .nav-toggle{display:inline-flex}
+  .header-userbar{order:2;margin-left:0}
+  .nav{display:none;order:3;flex-direction:column;align-items:stretch;width:100%;margin:6px 0 4px;padding:6px 0;overflow:visible;border-top:1px solid rgba(255,255,255,.2)}
+  .header.nav-open .nav{display:flex}
+  .nav button{width:100%;padding:12px;min-height:44px;font-size:15px}
+  .brand-name{font-size:16px;white-space:normal}
+  .home{padding:48px 16px 56px;min-height:auto}
+  .home-actions{grid-template-columns:1fr;margin-top:36px}
+  .action-card{min-height:0;padding:22px 22px 24px}
+  .action-arrow{right:20px;bottom:auto;top:30px}
 }
 </style>
 </head>
@@ -265,24 +314,53 @@ input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-sh
     </div>
   </div>
 </div>
-<div class="header">
-  <div class="brand"><h1>Emergency Blood Release</h1><span class="sub">Blood Bank &middot; Laboratory Department</span></div>
+<header class="header" id="appHeader">
+  <a class="brand" href="#" onclick="show('home');return false;" aria-label="Emergency Blood Release — Home">
+    <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 2.5C11.3 8.6 6.5 13.9 6.5 19a9.5 9.5 0 0 0 19 0c0-5.1-4.8-10.4-9.5-16.5z"/><path fill="#8E1B2C" d="M14.6 14.5h2.8v3.6H21v2.8h-3.6v3.6h-2.8v-3.6H11v-2.8h3.6z"/></svg>
+    <span class="brand-text"><span class="brand-kicker">BLOOD BANK</span><span class="brand-name">Emergency Blood Release</span></span>
+  </a>
+  <button type="button" class="nav-toggle no-print" id="navToggle" aria-controls="mainNav" aria-expanded="false" onclick="toggleNav()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg><span class="sr-only">Menu</span></button>
+  <nav class="nav no-print" id="mainNav" aria-label="Main">
+    <button type="button" data-page="home" class="active" onclick="show('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button>
+    <button type="button" data-page="new" onclick="show('new')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/></svg><span>Create Tag</span></button>
+    <button type="button" data-page="tagPage" onclick="show('tagPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Tag Preview</span></button>
+    <button type="button" data-page="issueReport" onclick="show('issueReport')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg><span>Issue Report</span></button>
+    <button type="button" data-page="history" onclick="show('history')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg><span>History</span></button>
+    <button type="button" data-page="audit" onclick="show('audit')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 11h6"/><path d="M9 15h6"/></svg><span>Audit Trail</span></button>
+    <button type="button" data-page="users" id="usersNav" onclick="show('users')" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.3 8.2 8 9 4.7-.8 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Admin</span></button>
+  </nav>
   <div class="no-print header-userbar">
     <div id="headerUser"></div>
     <button id="signOutBtn" type="button" class="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
   </div>
-</div>
-<div class="nav no-print" role="navigation" aria-label="Main">
-  <button class="active" onclick="show('new',this)">New Release</button>
-  <button onclick="show('printCenter',this)">Print Center</button>
-  <button onclick="show('tagPage',this)">Tag Preview</button>
-  <button onclick="show('issueReport',this)">Issue Report</button>
-  <button onclick="show('history',this)">History</button>
-  <button onclick="show('audit',this)">Audit Trail</button>
-  <button onclick="show('dashboard',this)">Dashboard</button>
-  <button id="usersNav" onclick="show('users',this)" style="display:none">Users</button>
-  <button id="logoutNav" type="button" onclick="doLogout()" style="display:none">Logout</button>
-</div>
+</header>
+<section id="home" class="page home active" aria-labelledby="homeTitle">
+  <div class="home-inner">
+    <p class="home-kicker">BLOOD BANK</p>
+    <h1 class="home-title" id="homeTitle">Emergency Blood Release</h1>
+    <p class="home-slogan">Every Second Matters. Every Unit Counts.</p>
+    <div class="home-actions">
+      <button type="button" class="action-card primary" onclick="show('new')">
+        <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/></svg></span>
+        <span class="action-title">Create Tag</span>
+        <span class="action-desc">Enter patient and blood unit details.</span>
+        <svg class="action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </button>
+      <button type="button" class="action-card" onclick="show('tagPage')">
+        <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>
+        <span class="action-title">Tag Preview</span>
+        <span class="action-desc">Review existing tags before printing.</span>
+        <svg class="action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </button>
+      <button type="button" class="action-card" onclick="show('issueReport')">
+        <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg></span>
+        <span class="action-title">Issue Report</span>
+        <span class="action-desc">Prepare and print issue reports.</span>
+        <svg class="action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
 <main>
 
 
@@ -306,7 +384,7 @@ input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-sh
 </div></div>
 </section>
 
-<section id="new" class="page active">
+<section id="new" class="page">
   <div id="serverStatus" class="message no-print" style="margin-bottom:14px">Connecting to server…</div>
 
   <div class="card no-print"><h2>Printer Connection</h2><div class="body">
@@ -316,7 +394,7 @@ input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-sh
     <div id="zebraStatus" class="message no-print">Checking Zebra Print Agent…</div>
   </div></div>
 
-  <div class="card no-print"><h2>New Release</h2><div class="body">
+  <div class="card no-print"><h2>Create Tag</h2><div class="body">
     <ol class="stepper" id="releaseStepper" aria-label="Release workflow steps">
       <li class="active" data-step="1"><b>Step 1</b>Patient Information</li>
       <li data-step="2"><b>Step 2</b>Release Details</li>
@@ -388,7 +466,7 @@ input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-sh
         <button class="secondary" type="button" onclick="goReleaseStep(3)">Back</button>
         <button type="button" onclick="generate()">Generate Compatibility Tag</button>
         <button class="printbtn" type="button" onclick="printAllTagsDirect()">Print All Tags — Zebra</button>
-        <button class="secondary" type="button" onclick="issueReportView();show('issueReport',document.querySelectorAll('.nav button')[3])">Open Issue Report</button>
+        <button class="secondary" type="button" onclick="show('issueReport')">Open Issue Report</button>
         <button class="secondary" type="button" onclick="clearForm();goReleaseStep(1)">Clear Form</button>
       </div>
     </div>
@@ -400,13 +478,13 @@ input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-sh
 <section id="tagPage" class="page">
   <div class="no-print" style="font-size:11px;color:#666;margin-top:7px">
 <strong>Print settings:</strong> Tag → select Zebra GK420t and 2.71 × 5.13 in stock. Issue Report → select your A4 printer and A4 Portrait. Emergency Release Report adds the emergency declaration; Routine Issue Report does not.
-</div><div class="actions no-print"><button class="printbtn" onclick="printCurrentPreviewTag()">Print Current Tag — Zebra</button><button class="printbtn" onclick="printAllTagsDirect()">Print All Added Tags — One Print Job</button><button class="secondary" onclick="show('new',document.querySelector('.nav button[onclick*=\"new\"]'))">Back</button></div>
+</div><div class="actions no-print"><button class="printbtn" onclick="printCurrentPreviewTag()">Print Current Tag — Zebra</button><button class="printbtn" onclick="printAllTagsDirect()">Print All Added Tags — One Print Job</button><button class="secondary" onclick="show('printCenter')">Print Center</button><button class="secondary" onclick="show('new')">Back</button></div>
   <div id="tagPreviewList"></div>
 </section>
 
 <section id="history" class="page">
   <div class="card"><h2>Tag History</h2><div class="body">
-    <div class="filterbar no-print"><input id="histSearch" placeholder="Search patient, file, unit, technologist" oninput="historyView()"><input id="histDate" type="date" onchange="historyView()" title="Filter by date"><select id="histType" onchange="historyView()"><option value="ALL">All Types</option><option value="ROUTINE">Routine</option><option value="EMERGENCY">Emergency</option></select><button class="secondary" onclick="exportHistoryCSV()">Export CSV</button></div>
+    <div class="filterbar no-print"><input id="histSearch" placeholder="Search patient, file, unit, technologist" oninput="historyView()"><input id="histDate" type="date" onchange="historyView()" title="Filter by date"><select id="histType" onchange="historyView()"><option value="ALL">All Types</option><option value="ROUTINE">Routine</option><option value="EMERGENCY">Emergency</option></select><button class="secondary" onclick="exportHistoryCSV()">Export CSV</button><button class="secondary" onclick="show('dashboard')">Dashboard</button></div>
     <div id="historyList" class="empty-state">No records yet.</div>
   </div></div>
 </section>
@@ -416,7 +494,7 @@ input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-sh
 </section>
 
 <section id="issueReport" class="page">
-<div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new',document.querySelector('.nav button[onclick*=\"new\"]'))">Back</button></div>
+<div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new')">Back</button></div>
 <div class="card"><div class="body"><div id="issuePrint" class="issue-report">
 <div class="ir-header"><div><div class="ir-title">BLOOD BANK</div><div class="ir-subtitle">BLOOD ISSUE REPORT</div></div></div>
 <div class="ir-patient">
@@ -485,7 +563,6 @@ function applyAdminUI(){
   const signedIn=!!(u&&u.username);
   if(hu) hu.textContent=signedIn?('Signed in as '+u.username+(isAdmin()?' (admin)':'')):'';
   const so=$('signOutBtn'); if(so) so.style.display=signedIn?'inline-flex':'none';
-  const ln=$('logoutNav'); if(ln) ln.style.display=signedIn?'':'none';
   bindLogoutButtons();
 }
 function doLogout(ev){
@@ -501,7 +578,7 @@ function doLogout(ev){
   return false;
 }
 function bindLogoutButtons(){
-  ['signOutBtn','logoutNav'].forEach(id=>{
+  ['signOutBtn'].forEach(id=>{
     const el=$(id); if(!el||el.dataset.boundLogout) return;
     el.dataset.boundLogout='1';
     el.addEventListener('click',doLogout);
@@ -619,7 +696,10 @@ async function loadServerHistory(opts={}){
   }
 }
 function focusId(id){$(id).focus()}
-function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='history')historyView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView();if(id==='users')usersView();if(id==='new'){updateReleaseBadge();updateUnitProgress();if(releaseStep===4)renderReviewSummary();}}
+function setNavOpen(open){const h=$('appHeader'),t=$('navToggle');if(!h)return;h.classList.toggle('nav-open',!!open);if(t)t.setAttribute('aria-expanded',open?'true':'false')}
+function toggleNav(){setNavOpen(!$('appHeader').classList.contains('nav-open'))}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')setNavOpen(false)});
+function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));setNavOpen(false);window.scrollTo(0,0);if(id==='history')historyView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView();if(id==='users')usersView();if(id==='new'){updateReleaseBadge();updateUnitProgress();if(releaseStep===4)renderReviewSummary();}}
 function renderUsers(users){
   const list=$('usersList'), sel=$('pwUsername');
   if(!list) return;
@@ -866,7 +946,7 @@ function generate(){
   $('msg').textContent='✓ '+rows.length+' TAG(S) GENERATED — ISSUE REPORT READY';
   addAudit('DOCUMENT_GENERATED',{details:rows.length+' tag(s) generated',releaseType:$('releaseType')?.value||'ROUTINE'});
   renderTagPreviews();
-  show('tagPage', document.querySelector('.nav button[onclick*="tagPage"]') || document.querySelectorAll('.nav button')[2]);
+  show('tagPage');
 }
 function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value='';$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}
 function getHistory(){try{const a=JSON.parse(localStorage.getItem('ctags')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
@@ -1005,7 +1085,7 @@ async function printAllTagsDirect(){
   }catch(e){alert('Batch Zebra printing failed.\n\n'+e.message+'\n\nMake sure the Print Agent is running on this PC.');return false;}
 }
 function printTagFromCenter(){
-  show('tagPage',document.querySelectorAll('.nav button')[1]);
+  show('tagPage');
   printTag();
 }
 function printIssueFromCenter(emergency=false){
@@ -1013,7 +1093,7 @@ function printIssueFromCenter(emergency=false){
   issueReportView();
   addAudit('PRINT_ATTEMPT', {releaseType: emergency?'EMERGENCY':'ROUTINE', details:'A4 issue report print requested'});
   $('issuePrint').classList.toggle('emergency-mode',!!emergency);
-  show('issueReport',document.querySelectorAll('.nav button')[3]);
+  show('issueReport');
   document.body.classList.remove('print-tag');
   document.body.classList.add('print-issue');
   setTimeout(()=>window.print(),150);

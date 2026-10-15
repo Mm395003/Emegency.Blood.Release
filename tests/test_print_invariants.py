@@ -1,5 +1,6 @@
 """Guardrails for tag/report print dimensions and branding."""
 
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,3 +36,32 @@ def test_release_workflow_steps_present():
     assert 'data-step-panel="3"' in HTML
     assert 'data-step-panel="4"' in HTML
     assert "goReleaseStep" in HTML
+
+
+def _home_section():
+    start = HTML.index('<section id="home"')
+    return HTML[start:HTML.index("</section>", start)]
+
+
+def test_header_crimson_and_identity():
+    assert "--crimson:#8E1B2C" in HTML
+    assert ".header{" in HTML and "background:var(--crimson)" in HTML
+    assert "BLOOD BANK" in HTML
+    assert "Laboratory Department" not in HTML
+
+
+def test_homepage_hero_and_three_cards():
+    home = _home_section()
+    assert "Emergency Blood Release" in home
+    assert "Every Second Matters. Every Unit Counts." in home
+    assert home.count('class="action-card') == 3
+    assert "show('new')" in home and "show('tagPage')" in home and "show('issueReport')" in home
+    after_slogan = home.split("Every Second Matters. Every Unit Counts.</p>", 1)[1]
+    assert not re.search(r"<p[\s>]", after_slogan)
+    assert "<img" not in home
+
+
+def test_nav_items_and_admin_gate():
+    for label in ["Home", "Create Tag", "Tag Preview", "Issue Report", "History", "Audit Trail", "Admin"]:
+        assert f"<span>{label}</span>" in HTML
+    assert 'id="usersNav"' in HTML and 'style="display:none"' in HTML
