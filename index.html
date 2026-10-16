@@ -199,7 +199,7 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 @page tagPage {size:2.71in 5.13in;margin:0}
 @page issuePage {size:A4 portrait;margin:6mm}
 
-.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.filterbar .date-field{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}.filterbar .date-field input{min-width:150px}.date-quick{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-4px 0 12px}.date-quick button{padding:6px 12px;font-size:13px}.hist-count{margin-left:auto;font-size:13px;color:var(--muted)}@media(max-width:760px){.filterbar .date-field{flex:1 1 45%}.hist-count{margin-left:0;width:100%}}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.filterbar .date-field{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}.filterbar .date-field input{min-width:150px}.date-quick{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-4px 0 12px}.date-quick button{padding:6px 12px;font-size:13px}.request-tag{font-size:13px;color:var(--muted);margin-left:auto;margin-right:10px}.request-tag b{color:var(--navy);font-size:14px;letter-spacing:.02em}.hist-count{margin-left:auto;font-size:13px;color:var(--muted)}@media(max-width:760px){.filterbar .date-field{flex:1 1 45%}.hist-count{margin-left:0;width:100%}}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
 @media(max-width:800px){.dash-grid{grid-template-columns:1fr}}
 
 .login-overlay{position:fixed;inset:0;background:rgba(20,10,12,.55);z-index:50;align-items:center;justify-content:center}
@@ -322,7 +322,7 @@ body:has(#home.active) main{margin:0;padding:0}
   <button type="button" class="nav-toggle no-print" id="navToggle" aria-controls="mainNav" aria-expanded="false" onclick="toggleNav()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg><span class="sr-only">Menu</span></button>
   <nav class="nav no-print" id="mainNav" aria-label="Main">
     <button type="button" data-page="home" class="active" onclick="show('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button>
-    <button type="button" data-page="new" onclick="show('new')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/></svg><span>Create Tag</span></button>
+    <button type="button" data-page="new" onclick="openCreateTag()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/></svg><span>Create Tag</span></button>
     <button type="button" data-page="tagPage" onclick="show('tagPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Tag Preview</span></button>
     <button type="button" data-page="issueReport" onclick="show('issueReport')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg><span>Issue Report</span></button>
     <button type="button" data-page="history" onclick="show('history')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg><span>History</span></button>
@@ -339,7 +339,7 @@ body:has(#home.active) main{margin:0;padding:0}
     <h1 class="home-title" id="homeTitle">Emergency Blood Release</h1>
     <p class="home-slogan">Every Second Matters. Every Unit Counts.</p>
     <div class="home-actions">
-      <button type="button" class="action-card primary" onclick="show('new')">
+      <button type="button" class="action-card primary" onclick="openCreateTag()">
         <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/></svg></span>
         <span class="action-title">Create Tag</span>
         <span class="action-desc">Enter patient and blood unit details.</span>
@@ -402,6 +402,7 @@ body:has(#home.active) main{margin:0;padding:0}
     </ol>
     <div class="progress-meta">
       <div class="unit-progress" id="unitProgress">Requested units: 0 / 1 entered</div>
+      <span class="request-tag">Request No. <b class="request-no">—</b></span>
       <span class="badge info" id="releaseTypeBadge">Emergency</span>
     </div>
     <div id="stepMsg" class="alert info" style="margin-bottom:14px">Complete each step. Clinical compatibility must be entered from approved source data — scanning does not decide compatibility.</div>
@@ -466,7 +467,7 @@ body:has(#home.active) main{margin:0;padding:0}
         <button type="button" onclick="generate()">Generate Compatibility Tag</button>
         <button class="printbtn" type="button" onclick="printAllTagsDirect()">Print All Tags — Zebra</button>
         <button class="secondary" type="button" onclick="show('issueReport')">Open Issue Report</button>
-        <button class="secondary" type="button" onclick="clearForm();goReleaseStep(1)">Clear Form</button>
+        <button class="secondary" type="button" onclick="newTag()">New Tag</button>
       </div>
     </div>
 
@@ -477,7 +478,7 @@ body:has(#home.active) main{margin:0;padding:0}
 <section id="tagPage" class="page">
   <div class="no-print" style="font-size:11px;color:#666;margin-top:7px">
 <strong>Print settings:</strong> Tag → select Zebra GK420t and 2.71 × 5.13 in stock. Issue Report → select your A4 printer and A4 Portrait. Emergency Release Report adds the emergency declaration; Routine Issue Report does not.
-</div><div class="actions no-print"><button class="printbtn" onclick="printCurrentPreviewTag()">Print Current Tag — Zebra</button><button class="printbtn" onclick="printAllTagsDirect()">Print All Added Tags — One Print Job</button><button class="secondary" onclick="show('printCenter')">Print Center</button><button class="secondary" onclick="show('new')">Back</button></div>
+</div><div class="actions no-print"><button class="printbtn" onclick="printCurrentPreviewTag()">Print Current Tag — Zebra</button><button class="printbtn" onclick="printAllTagsDirect()">Print All Added Tags — One Print Job</button><button class="secondary" onclick="show('printCenter')">Print Center</button><button class="secondary" onclick="show('new')">Back</button><button type="button" onclick="newTag()">New Tag</button></div>
   <div id="tagPreviewList"></div>
 </section>
 
@@ -494,7 +495,7 @@ body:has(#home.active) main{margin:0;padding:0}
 </section>
 
 <section id="issueReport" class="page">
-<div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new')">Back</button></div>
+<div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new')">Back</button><button type="button" onclick="newTag()">New Tag</button></div>
 <div class="card"><div class="body"><div id="issuePrint" class="issue-report">
 <div class="ir-header"><div><div class="ir-title">BLOOD BANK</div><div class="ir-subtitle">BLOOD ISSUE REPORT</div></div></div>
 <div class="ir-patient">
@@ -795,6 +796,7 @@ function renderReviewSummary(){
   const units=getIssueUnits();
   const type=$('releaseType')?.value||'ROUTINE';
   host.innerHTML=`
+    <div class="kv"><span>Request No.</span><b>${currentRequestNo()}</b></div>
     <div class="kv"><span>Patient</span><b>${($('name').value.trim()||'—')}</b></div>
     <div class="kv"><span>File Number</span><b>${($('file').value.trim()||'—')}</b></div>
     <div class="kv"><span>Age / Sex</span><b>${($('age').value||'—')} / ${($('sex').value||'—')}</b></div>
@@ -877,8 +879,8 @@ function addRequestedUnitsToIssue(){
   for(const item of rows){if(merged.some(x=>x.unit===item.unit)){alert('This blood unit is already added: '+item.unit);return false;} merged.push(item); saveHistoryRecord(item);}
   setIssueUnits(merged); $('msg').className='message no-print'; $('msg').textContent='✓ '+rows.length+' UNIT(S) ADDED — READY FOR ISSUE REPORT';
 }
-function saveHistoryRecord(x){const record={time:x.dt||now(),name:$('name').value.trim()||'—',file:$('file').value.trim()||'—',unit:x.unit||'—',status:x.status||'—',releaseType:$('releaseType')?.value||'ROUTINE',comp:x.comp||'—',dg:x.dg||'—',loc:$('loc').value||'—',tech:$('tech').value.trim()||'—',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN'};const a=getHistory();a.unshift(record);localStorage.setItem('ctags',JSON.stringify(a.slice(0,500)));addAudit('UNIT_ADDED',record);api('/api/history',{method:'POST',body:JSON.stringify({records:[record]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('ctags',JSON.stringify(d.records));historyView();dashboardView();}).catch(e=>{$('serverStatus').className='message error no-print';$('serverStatus').textContent='History saved on this device only — server error: '+e.message});historyView();dashboardView()}
-function addAudit(action,x={}){const row={time:now(),action,user:$('tech')?.value.trim()||'—',patient:$('name')?.value.trim()||'—',file:$('file')?.value.trim()||'—',unit:x.unit||'—',releaseType:x.releaseType||'ROUTINE',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN',details:x.details||''};let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]');if(!Array.isArray(a))a=[]}catch(e){a=[]}a.unshift(row);localStorage.setItem('auditTrail',JSON.stringify(a.slice(0,1000)));api('/api/audit',{method:'POST',body:JSON.stringify({records:[row]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('auditTrail',JSON.stringify(d.records));auditView();}).catch(()=>{})}
+function saveHistoryRecord(x){const record={requestNo:x.requestNo||currentRequestNo(),time:x.dt||now(),name:$('name').value.trim()||'—',file:$('file').value.trim()||'—',unit:x.unit||'—',status:x.status||'—',releaseType:$('releaseType')?.value||'ROUTINE',comp:x.comp||'—',dg:x.dg||'—',loc:$('loc').value||'—',tech:$('tech').value.trim()||'—',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN'};const a=getHistory();a.unshift(record);localStorage.setItem('ctags',JSON.stringify(a.slice(0,500)));addAudit('UNIT_ADDED',record);api('/api/history',{method:'POST',body:JSON.stringify({records:[record]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('ctags',JSON.stringify(d.records));historyView();dashboardView();}).catch(e=>{$('serverStatus').className='message error no-print';$('serverStatus').textContent='History saved on this device only — server error: '+e.message});historyView();dashboardView()}
+function addAudit(action,x={}){const row={requestNo:x.requestNo||currentRequestNo(),time:now(),action,user:$('tech')?.value.trim()||'—',patient:$('name')?.value.trim()||'—',file:$('file')?.value.trim()||'—',unit:x.unit||'—',releaseType:x.releaseType||'ROUTINE',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN',details:x.details||''};let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]');if(!Array.isArray(a))a=[]}catch(e){a=[]}a.unshift(row);localStorage.setItem('auditTrail',JSON.stringify(a.slice(0,1000)));api('/api/audit',{method:'POST',body:JSON.stringify({records:[row]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('auditTrail',JSON.stringify(d.records));auditView();}).catch(()=>{})}
 function removeIssueUnit(i){const a=getIssueUnits();a.splice(i,1);setIssueUnits(a)}
 function clearIssueUnits(){sessionStorage.removeItem('issueUnits');renderUnitList();renderTagPreviews()}
 function tagDataForUnit(x){
@@ -948,12 +950,29 @@ function generate(){
   renderTagPreviews();
   show('tagPage');
 }
-function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value='';$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}
+function makeRequestNo(){const d=new Date(),p=n=>String(n).padStart(2,'0');const base='REQ-'+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds());const last=localStorage.getItem('lastRequestBase'),seq=last===base?(parseInt(localStorage.getItem('lastRequestSeq')||'1',10)+1):1;localStorage.setItem('lastRequestBase',base);localStorage.setItem('lastRequestSeq',String(seq));return seq>1?base+'-'+seq:base}
+function currentRequestNo(){let n=localStorage.getItem('currentRequestNo');if(!n){n=makeRequestNo();localStorage.setItem('currentRequestNo',n)}return n}
+function renderRequestNo(){const n=currentRequestNo();document.querySelectorAll('.request-no').forEach(el=>el.textContent=n)}
+function requestHasUnsavedEntries(){if(getIssueUnits().length)return false;const typed=['age','doctorName','doctorId'].some(id=>$(id)?.value.trim())||['file','name'].some(id=>{const v=$(id)?.value.trim();return v&&v!=='UNKNOWN'});return typed||[...document.querySelectorAll('.req-unit')].some(i=>i.value.trim())}
+function newTag(){
+  if(requestHasUnsavedEntries()&&!confirm('This request has entries that have not been generated yet. Start a new tag and clear them?'))return;
+  const prev=currentRequestNo();
+  clearForm();
+  clearIssueUnits();
+  const d=new Date();$('callTime').value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  localStorage.setItem('currentRequestNo',makeRequestNo());
+  renderRequestNo();updateUnitProgress();renderReviewSummary();issueReportView();
+  $('msg').className='message no-print';$('msg').textContent='READY — ENTER PATIENT AND BLOOD UNIT INFORMATION';
+  addAudit('NEW_REQUEST',{details:'Started '+currentRequestNo()+' (previous '+prev+')'});
+  show('new');
+}
+function openCreateTag(){if(getIssueUnits().length)newTag();else show('new')}
+function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button'&&i.id!=='printAgentUrl') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value='';$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}
 function getHistory(){try{const a=JSON.parse(localStorage.getItem('ctags')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function setHistRange(daysBack){const from=$('histFrom'),to=$('histTo');if(daysBack===null){from.value='';to.value=''}else{const d=new Date();to.value=ymd(d);d.setDate(d.getDate()-daysBack);from.value=ymd(d)}historyView()}
 function filteredHistory(){const a=getHistory(),q=($('histSearch')?.value||'').toLowerCase(),type=$('histType')?.value||'ALL';let from=$('histFrom')?.value||'',to=$('histTo')?.value||'';if(from&&to&&from>to)[from,to]=[to,from];return a.filter(x=>{const day=String(x.time||'').slice(0,10);return(type==='ALL'||(x.releaseType||'ROUTINE')===type)&&(!from||day>=from)&&(!to||day<=to)&&(!q||Object.values(x).join(' ').toLowerCase().includes(q))})}
-function historyView(){const a=getHistory(),f=filteredHistory();if($('histCount'))$('histCount').textContent=a.length?`Showing ${f.length} of ${a.length} records`:'';$('historyList').innerHTML=f.length?'<div class="table-wrap"><table class="hist"><tr><th>Time</th><th>Patient</th><th>File</th><th>Age</th><th>Sex</th><th>Doctor</th><th>Call Time</th><th>Unit</th><th>Component</th><th>Status</th><th>Type</th><th>Tech</th></tr>'+f.map(x=>`<tr><td>${x.time||'—'}</td><td>${x.name||'—'}</td><td>${x.file||'—'}</td><td>${x.age||'—'}</td><td>${x.sex||'—'}</td><td>${(x.doctorName||'—')+(x.doctorId&&x.doctorId!=='—'?' / '+x.doctorId:'')}</td><td>${x.callTime||'—'}</td><td>${x.unit||'—'}</td><td>${x.comp||'—'}</td><td>${x.status||'—'}</td><td>${x.releaseType||'ROUTINE'}</td><td>${x.tech||'—'}</td></tr>`).join('')+'</table></div>':'<div class="empty-state">No matching records.</div>'}
+function historyView(){const a=getHistory(),f=filteredHistory();if($('histCount'))$('histCount').textContent=a.length?`Showing ${f.length} of ${a.length} records`:'';$('historyList').innerHTML=f.length?'<div class="table-wrap"><table class="hist"><tr><th>Request No.</th><th>Time</th><th>Patient</th><th>File</th><th>Age</th><th>Sex</th><th>Doctor</th><th>Call Time</th><th>Unit</th><th>Component</th><th>Status</th><th>Type</th><th>Tech</th></tr>'+f.map(x=>`<tr><td style="white-space:nowrap"><b>${x.requestNo||'—'}</b></td><td>${x.time||'—'}</td><td>${x.name||'—'}</td><td>${x.file||'—'}</td><td>${x.age||'—'}</td><td>${x.sex||'—'}</td><td>${(x.doctorName||'—')+(x.doctorId&&x.doctorId!=='—'?' / '+x.doctorId:'')}</td><td>${x.callTime||'—'}</td><td>${x.unit||'—'}</td><td>${x.comp||'—'}</td><td>${x.status||'—'}</td><td>${x.releaseType||'ROUTINE'}</td><td>${x.tech||'—'}</td></tr>`).join('')+'</table></div>':'<div class="empty-state">No matching records.</div>'}
 function auditView(){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]')}catch(e){}const q=($('auditSearch')?.value||'').toLowerCase();const f=a.filter(x=>!q||Object.values(x).join(' ').toLowerCase().includes(q));$('auditList').innerHTML=f.length?'<table class="hist"><tr><th>Time</th><th>Action</th><th>User</th><th>Patient</th><th>File</th><th>Age</th><th>Sex</th><th>Unit</th><th>Type</th></tr>'+f.map(x=>`<tr><td>${x.time}</td><td>${x.action}</td><td>${x.user}</td><td>${x.patient}</td><td>${x.file}</td><td>${x.age||'—'}</td><td>${x.sex||'—'}</td><td>${x.unit}</td><td>${x.releaseType}</td></tr>`).join('')+'</table>':'No audit records yet.'}
 function dashboardView(){const a=getHistory(),d=now().slice(0,10);$('total').textContent=a.length;$('today').textContent=a.filter(x=>String(x.time||'').slice(0,10)===d).length;$('units').textContent=new Set(a.map(x=>x.unit).filter(Boolean)).size;$('emergencyCount').textContent=a.filter(x=>(x.releaseType||'ROUTINE')==='EMERGENCY').length;$('routineCount').textContent=a.filter(x=>(x.releaseType||'ROUTINE')==='ROUTINE').length;$('patientCount').textContent=new Set(a.map(x=>x.file).filter(x=>x&&x!=='—')).size;const counts=(key)=>{const m={};a.forEach(x=>{const k=x[key]||'—';m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><b>${v}</b></div>`).join('')||'—'};const ageGroup=(age)=>{const n=parseInt(age,10);if(!Number.isFinite(n))return 'Unknown';if(n<1)return '<1';if(n<=12)return '1–12';if(n<=17)return '13–17';if(n<=29)return '18–29';if(n<=44)return '30–44';if(n<=59)return '45–59';return '60+'};const ageCounts={};a.forEach(x=>{const k=ageGroup(x.age);ageCounts[k]=(ageCounts[k]||0)+1});const ageHtml=Object.entries(ageCounts).map(([k,v])=>`<div class="mini-stat"><span>${k}</span><b>${v}</b></div>`).join('')||'—';$('componentStats').innerHTML=counts('comp');$('groupStats').innerHTML=counts('dg');$('sexStats').innerHTML=counts('sex');$('ageStats').innerHTML=ageHtml;$('techStats').innerHTML=counts('tech')}
 function exportHistoryCSV(){downloadCSV(filteredHistory(),'blood_release_history.csv')}
@@ -1117,7 +1136,7 @@ function printIssueReport(emergency=false){
 window.addEventListener('afterprint',()=>{
   document.body.classList.remove('print-tag','print-issue'); $('issuePrint').classList.remove('emergency-mode');
 });
-$('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);
+$('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderRequestNo();renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);
 if($('printAgentUrl')) $('printAgentUrl').value=getPrintAgentUrl();
 bindLogoutButtons();
 applyAdminUI();

@@ -55,7 +55,7 @@ def test_homepage_hero_and_three_cards():
     assert "Emergency Blood Release" in home
     assert "Every Second Matters. Every Unit Counts." in home
     assert home.count('class="action-card') == 3
-    assert "show('new')" in home and "show('history')" in home and "show('dashboard')" in home
+    assert "openCreateTag()" in home and "show('history')" in home and "show('dashboard')" in home
     assert "show('tagPage')" not in home and "show('issueReport')" not in home
     after_slogan = home.split("Every Second Matters. Every Unit Counts.</p>", 1)[1]
     assert not re.search(r"<p[\s>]", after_slogan)
@@ -73,3 +73,13 @@ def test_history_date_range_filter():
     assert 'id="histFrom"' in HTML and 'id="histTo"' in HTML
     assert "function filteredHistory" in HTML
     assert "downloadCSV(filteredHistory()" in HTML
+
+
+def test_request_number_saved_and_new_tag_resets():
+    assert "function makeRequestNo" in HTML
+    assert "requestNo:x.requestNo||currentRequestNo()" in HTML
+    assert "<th>Request No.</th>" in HTML
+    assert HTML.count('onclick="newTag()"') >= 3
+    new_tag = HTML.split("function newTag(){", 1)[1].split("\nfunction ", 1)[0]
+    for step in ["clearForm()", "clearIssueUnits()", "setItem('currentRequestNo'"]:
+        assert step in new_tag
