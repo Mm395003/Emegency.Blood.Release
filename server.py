@@ -35,6 +35,7 @@ USERS_FILE = DATA_DIR / "users.json"
 SESSIONS_FILE = DATA_DIR / "sessions.json"
 HISTORY_FILE = DATA_DIR / "history.json"
 AUDIT_FILE = DATA_DIR / "audit.json"
+REQUEST_COUNTER_FILE = DATA_DIR / "request_counter.json"
 
 DEFAULT_ADMIN_USER = os.environ.get("BLOOD_ADMIN_USER", "admin")
 DEFAULT_ADMIN_PASS = os.environ.get("BLOOD_ADMIN_PASSWORD", "admin123")
@@ -64,6 +65,11 @@ class UserCreateRequest(BaseModel):
 class PasswordChangeRequest(BaseModel):
     username: str
     password: str
+
+
+class RequestNumberRequest(BaseModel):
+    prefix: str = Field(pattern=r"^\d{6}$")
+    known_max: int = Field(default=0, ge=0, le=99999)
 
 
 class BulkRequest(BaseModel):
@@ -394,6 +400,36 @@ def add_history(
         merged = _merge_records(existing, body.records or [], 500)
         _write_json(HISTORY_FILE, merged)
         return {"records": merged}
+
+
+def _max_request_seq(records: list[Any], prefix: str) -> int:
+    best = 0
+    for r in records:
+        no = str(r.get("requestNo", "")) if isinstance(r, dict) else ""
+        if no.startswith(prefix) and no[len(prefix):].isdigit():
+            best = max(best, int(no[len(prefix):]))
+    return best
+
+
+@app.post("/api/request-number")
+def next_request_number(
+    body: RequestNumberRequest, _: dict[str, Any] = Depends(current_user)
+) -> dict[str, str]:
+    """Allocate the next daily request number: YYMMDD + 3-digit sequence."""
+    with _lock:
+        counters = _read_json(REQUEST_COUNTER_FILE, {})
+        if not isinstance(counters, dict):
+            counters = {}
+        history = _read_json(HISTORY_FILE, [])
+        seq = max(
+            int(counters.get(body.prefix, 0) or 0),
+            _max_request_seq(history if isinstance(history, list) else [], body.prefix),
+            body.known_max,
+        ) + 1
+        counters[body.prefix] = seq
+        counters = dict(sorted(counters.items())[-14:])
+        _write_json(REQUEST_COUNTER_FILE, counters)
+    return {"requestNo": f"{body.prefix}{seq:03d}"}
 
 
 @app.get("/api/audit")

@@ -664,6 +664,7 @@ async function doLogin(){
     $('serverStatus').textContent='✓ Connected to server as '+(data.user&&data.user.username||username);
     applyAdminUI();
     await loadServerHistory({keepSessionOnError:true,seq:mySeq});
+    ensureRequestNo();
   }catch(e){
     $('loginErr').style.display='block';
     const msg=String(e.message||'Login failed');
@@ -976,23 +977,42 @@ function generate(){
   renderTagPreviews();
   show('tagPage');
 }
-function makeRequestNo(){const d=new Date(),p=n=>String(n).padStart(2,'0');const base='REQ-'+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds());const last=localStorage.getItem('lastRequestBase'),seq=last===base?(parseInt(localStorage.getItem('lastRequestSeq')||'1',10)+1):1;localStorage.setItem('lastRequestBase',base);localStorage.setItem('lastRequestSeq',String(seq));return seq>1?base+'-'+seq:base}
-function currentRequestNo(){let n=localStorage.getItem('currentRequestNo');if(!n){n=makeRequestNo();localStorage.setItem('currentRequestNo',n)}return n}
+function requestPrefix(){const d=new Date(),p=n=>String(n).padStart(2,'0');return String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())}
+function requestSeqOf(no,prefix){no=String(no||'');return no.startsWith(prefix)&&/^\d+$/.test(no.slice(prefix.length))?parseInt(no.slice(prefix.length),10):0}
+function knownRequestMax(prefix){let m=requestSeqOf(localStorage.getItem('lastRequestNo'),prefix);getHistory().forEach(r=>{m=Math.max(m,requestSeqOf(r.requestNo,prefix))});return m}
+function currentRequestNo(){return localStorage.getItem('currentRequestNo')||'—'}
+function requestNoUsed(no){return !!no&&getHistory().some(r=>r.requestNo===no)}
 function renderRequestNo(){const n=currentRequestNo();document.querySelectorAll('.request-no').forEach(el=>el.textContent=n)}
+let requestNoPending=null;
+function allocateRequestNo(){
+  if(requestNoPending) return requestNoPending;
+  const prefix=requestPrefix(),known=knownRequestMax(prefix);
+  const local=()=>({requestNo:prefix+String(known+1).padStart(3,'0'),source:'local'});
+  requestNoPending=(getToken()?api('/api/request-number',{method:'POST',body:JSON.stringify({prefix,known_max:known})}).then(d=>({requestNo:d.requestNo,source:'server'})).catch(local):Promise.resolve(local()))
+    .then(r=>{localStorage.setItem('currentRequestNo',r.requestNo);localStorage.setItem('currentRequestNoSource',r.source);localStorage.setItem('lastRequestNo',r.requestNo);renderRequestNo();return r.requestNo})
+    .finally(()=>{requestNoPending=null});
+  return requestNoPending;
+}
+function ensureRequestNo(){
+  const no=localStorage.getItem('currentRequestNo')||'',used=requestNoUsed(no);
+  const valid=/^\d{9,}$/.test(no),today=no.startsWith(requestPrefix());
+  const unconfirmed=localStorage.getItem('currentRequestNoSource')!=='server'&&!!getToken();
+  if(!valid||(!today&&!used)||(unconfirmed&&!used)||(used&&!getIssueUnits().length)) return allocateRequestNo();
+  renderRequestNo();return Promise.resolve(no);
+}
 function requestHasUnsavedEntries(){if(getIssueUnits().length)return false;const typed=['age','doctorName','doctorId'].some(id=>$(id)?.value.trim())||['file','name'].some(id=>{const v=$(id)?.value.trim();return v&&v!=='UNKNOWN'});return typed||[...document.querySelectorAll('.req-unit')].some(i=>i.value.trim())}
 function newTag(){
   if(requestHasUnsavedEntries()&&!confirm('This request has entries that have not been generated yet. Start a new tag and clear them?'))return;
-  const prev=currentRequestNo();
+  const prev=currentRequestNo(),needNew=requestNoUsed(prev);
   clearForm();
   clearIssueUnits();
   const d=new Date();$('callTime').value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-  localStorage.setItem('currentRequestNo',makeRequestNo());
-  renderRequestNo();updateUnitProgress();renderReviewSummary();issueReportView();
+  updateUnitProgress();renderReviewSummary();issueReportView();
   $('msg').className='message no-print';$('msg').textContent='READY — ENTER PATIENT AND BLOOD UNIT INFORMATION';
-  addAudit('NEW_REQUEST',{details:'Started '+currentRequestNo()+' (previous '+prev+')'});
+  (needNew?allocateRequestNo():ensureRequestNo()).then(no=>addAudit('NEW_REQUEST',{requestNo:no,details:'Started '+no+' (previous '+prev+')'}));
   show('new');
 }
-function openCreateTag(){if(getIssueUnits().length)newTag();else show('new')}
+function openCreateTag(){if(getIssueUnits().length||requestNoUsed(currentRequestNo()))newTag();else show('new')}
 function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button'&&i.id!=='printAgentUrl') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value=savedTechName();$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}
 function getHistory(){try{const a=JSON.parse(localStorage.getItem('ctags')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -1162,7 +1182,7 @@ function printIssueReport(emergency=false){
 window.addEventListener('afterprint',()=>{
   document.body.classList.remove('print-tag','print-issue'); $('issuePrint').classList.remove('emergency-mode');
 });
-$('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderRequestNo();renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);
+$('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderRequestNo();ensureRequestNo();renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);
 if($('printAgentUrl')) $('printAgentUrl').value=getPrintAgentUrl();
 bindLogoutButtons();
 applyAdminUI();

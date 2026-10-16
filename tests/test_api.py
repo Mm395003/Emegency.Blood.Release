@@ -81,3 +81,18 @@ def test_users_admin_only(client):
     ).json()["session_token"]
     denied = client.get("/api/users", headers={"Authorization": f"Bearer {tech_token}"})
     assert denied.status_code == 403
+
+
+def test_request_numbers_are_daily_sequence(client):
+    tok = client.post("/api/login", json={"username": "admin", "password": "admin123"}).json()["session_token"]
+    admin_headers = {"Authorization": f"Bearer {tok}"}
+    r1 = client.post("/api/request-number", json={"prefix": "261016"}, headers=admin_headers)
+    r2 = client.post("/api/request-number", json={"prefix": "261016"}, headers=admin_headers)
+    assert r1.status_code == 200
+    assert r1.json()["requestNo"] == "261016001"
+    assert r2.json()["requestNo"] == "261016002"
+    r3 = client.post("/api/request-number", json={"prefix": "261016", "known_max": 7}, headers=admin_headers)
+    assert r3.json()["requestNo"] == "261016008"
+    assert client.post("/api/request-number", json={"prefix": "261017"}, headers=admin_headers).json()["requestNo"] == "261017001"
+    assert client.post("/api/request-number", json={"prefix": "2610"}, headers=admin_headers).status_code == 422
+    assert client.post("/api/request-number", json={"prefix": "261016"}).status_code == 401

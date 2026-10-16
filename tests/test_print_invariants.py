@@ -76,12 +76,12 @@ def test_history_date_range_filter():
 
 
 def test_request_number_saved_and_new_tag_resets():
-    assert "function makeRequestNo" in HTML
+    assert "function allocateRequestNo" in HTML and "/api/request-number" in HTML
     assert "requestNo:x.requestNo||currentRequestNo()" in HTML
     assert "<th>Request No.</th>" in HTML
     assert HTML.count('onclick="newTag()"') >= 3
     new_tag = HTML.split("function newTag(){", 1)[1].split("\nfunction ", 1)[0]
-    for step in ["clearForm()", "clearIssueUnits()", "setItem('currentRequestNo'"]:
+    for step in ["clearForm()", "clearIssueUnits()", "allocateRequestNo()"]:
         assert step in new_tag
 
 
