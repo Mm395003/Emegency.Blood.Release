@@ -229,11 +229,27 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 .field-error{color:var(--err-ink);font-size:12px;font-weight:700;margin-top:4px;display:none}
 .field-error.show{display:block}
 input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-shadow:0 0 0 3px rgba(194,52,64,.12)}
-.stepper{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:0;list-style:none}
-.stepper li{flex:1;min-width:140px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:12px;font-weight:700}
-.stepper li b{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px;opacity:.8}
-.stepper li.active{border-color:var(--navy);color:var(--navy);box-shadow:var(--shadow)}
-.stepper li.done{border-color:var(--ok-line);color:var(--ok-ink);background:var(--ok-bg)}
+.stepper{display:flex;margin:4px 0 22px;padding:0;list-style:none;counter-reset:step}
+.stepper li{flex:1;position:relative;text-align:center}
+.stepper li:not(:first-child)::before{content:"";position:absolute;top:19px;right:50%;width:100%;height:3px;background:var(--line);z-index:0}
+.stepper li.done::before,.stepper li.active::before{background:var(--crimson)}
+.stepper button{all:unset;position:relative;z-index:1;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;padding:0 4px;box-sizing:border-box}
+.stepper button:focus-visible .step-dot{outline:3px solid var(--navy-light);outline-offset:3px}
+.step-dot{position:relative;z-index:1;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:17px;font-weight:800;background:#fff;color:var(--muted);border:3px solid var(--line);box-sizing:border-box}
+.step-label{font-size:14px;font-weight:700;color:var(--muted);line-height:1.25}
+.stepper li.active .step-dot{background:var(--crimson);border-color:var(--crimson);color:#fff;box-shadow:0 0 0 6px rgba(142,27,44,.14)}
+.stepper li.active .step-label{color:var(--crimson)}
+.stepper li.done .step-dot{background:var(--navy);border-color:var(--navy);color:#fff}
+.stepper li.done .step-label{color:var(--navy)}
+.stepper li.done .step-dot span{display:none}.stepper li.done .step-dot::after{content:"✓"}
+.step-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;border-left:5px solid var(--crimson);background:#F7F9FC;border-radius:10px;padding:14px 18px;margin-bottom:18px}
+.step-head>div:first-child{flex:1 1 360px}.step-meta .request-tag{margin:0}.step-count{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--crimson)}
+.step-title{font-size:22px;font-weight:800;color:var(--navy);margin:2px 0 4px}
+.step-help{font-size:15px;color:var(--ink);margin:0}
+.step-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:13px;color:var(--muted)}
+.step-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.step-nav .next{font-size:16px;padding:12px 22px}
+.step-nav .spacer{flex:1}
 .step-panel{display:none}
 .step-panel.active{display:block;animation:fade .18s ease}
 .progress-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
@@ -247,7 +263,7 @@ input.is-invalid,select.is-invalid{border-color:var(--err-line)!important;box-sh
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
 .card{box-shadow:var(--shadow)}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-@media(max-width:700px){.review-grid{grid-template-columns:1fr}.stepper li{min-width:100%}}
+@media(max-width:700px){.review-grid{grid-template-columns:1fr}.step-label{font-size:12px}.step-dot{width:34px;height:34px;font-size:15px}.stepper li:not(:first-child)::before{top:16px}.step-meta{align-items:flex-start}.step-nav .next{width:100%}}
 
 /* Homepage */
 .home{position:relative;overflow:hidden;background:#EEF2F7;min-height:calc(100vh - 64px);display:none;align-items:center;justify-content:center;padding:72px 24px 88px}
@@ -394,22 +410,27 @@ body:has(#home.active) main{margin:0;padding:0}
   </div></div>
 
   <div class="card no-print"><h2>Create Tag</h2><div class="body">
-    <ol class="stepper" id="releaseStepper" aria-label="Release workflow steps">
-      <li class="active" data-step="1"><b>Step 1</b>Patient Information</li>
-      <li data-step="2"><b>Step 2</b>Release Details</li>
-      <li data-step="3"><b>Step 3</b>Blood Unit Entry</li>
-      <li data-step="4"><b>Step 4</b>Review &amp; Documents</li>
+    <ol class="stepper" id="releaseStepper" aria-label="Create Tag steps">
+      <li class="active" data-step="1"><button type="button" onclick="goReleaseStep(1)"><span class="step-dot"><span>1</span></span><span class="step-label">Patient</span></button></li>
+      <li data-step="2"><button type="button" onclick="goReleaseStep(2)"><span class="step-dot"><span>2</span></span><span class="step-label">Request</span></button></li>
+      <li data-step="3"><button type="button" onclick="goReleaseStep(3)"><span class="step-dot"><span>3</span></span><span class="step-label">Blood Units</span></button></li>
+      <li data-step="4"><button type="button" onclick="goReleaseStep(4)"><span class="step-dot"><span>4</span></span><span class="step-label">Review &amp; Print</span></button></li>
     </ol>
-    <div class="progress-meta">
-      <div class="unit-progress" id="unitProgress">Requested units: 0 / 1 entered</div>
-      <span class="request-tag">Request No. <b class="request-no">—</b></span>
-      <span class="badge info" id="releaseTypeBadge">Emergency</span>
+    <div class="step-head">
+      <div>
+        <div class="step-count" id="stepCount">Step 1 of 4</div>
+        <div class="step-title" id="stepTitle">Patient Information</div>
+        <p class="step-help" id="stepMsg">Enter or scan the patient file number and name.</p>
+      </div>
+      <div class="step-meta">
+        <span class="request-tag">Request No. <b class="request-no">—</b></span>
+        <span class="badge info" id="releaseTypeBadge">Emergency</span>
+        <span class="unit-progress" id="unitProgress">Requested units: 0 / 1 entered</span>
+      </div>
     </div>
-    <div id="stepMsg" class="alert info" style="margin-bottom:14px">Complete each step. Clinical compatibility must be entered from approved source data — scanning does not decide compatibility.</div>
 
     <!-- Step 1 -->
     <div class="step-panel active" data-step-panel="1">
-      <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">1. Patient Information</h3>
       <div class="grid">
         <div class="full"><label for="file">Patient File Number</label><div class="scan"><input id="file" value="UNKNOWN" placeholder="Enter or scan patient file number"><button type="button" onclick="focusId('file')">SCAN</button></div><div class="field-error" id="err_file"></div></div>
         <div><label for="name">Patient Name</label><input id="name" value="UNKNOWN" placeholder="Enter patient name"><div class="field-error" id="err_name"></div></div>
@@ -418,12 +439,11 @@ body:has(#home.active) main{margin:0;padding:0}
         <div><label for="pg">Patient Blood Group</label><select id="pg"><option>UNKNOWN</option><option>O POS</option><option>O NEG</option><option>A POS</option><option>A NEG</option><option>B POS</option><option>B NEG</option><option>AB POS</option><option>AB NEG</option></select></div>
         <div><label for="loc">Ward / Location</label><select id="loc"><option>ER</option><option>OR</option><option>ICU</option><option>Ward</option><option>Other</option></select></div>
       </div>
-      <div class="btn-row"><button type="button" onclick="goReleaseStep(2)">Continue to Release Details</button></div>
+      <div class="step-nav"><span class="spacer"></span><button type="button" class="next" onclick="goReleaseStep(2)">Next: Request Details →</button></div>
     </div>
 
     <!-- Step 2 -->
     <div class="step-panel" data-step-panel="2">
-      <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">2. Release Details</h3>
       <div class="grid">
         <div><label for="tech">Technologist ID *</label><input id="tech" required onchange="rememberTechName()" onblur="rememberTechName()"><div class="field-hint" id="techHint"></div><div class="field-error" id="err_tech"></div></div>
         <div><label for="releaseType">Release Type *</label><select id="releaseType" onchange="updateReleaseBadge()"><option value="ROUTINE">Routine</option><option value="EMERGENCY" selected>Emergency / Urgent</option></select></div>
@@ -433,41 +453,41 @@ body:has(#home.active) main{margin:0;padding:0}
         <div><label for="requestedUnits">Doctor Requested Number of Units *</label><input id="requestedUnits" type="number" min="1" max="50" value="1" oninput="renderRequestedUnits();updateUnitProgress()"></div>
         <div><label for="requestedComp">Requested Blood Component *</label><select id="requestedComp" onchange="renderRequestedUnits();updateUnitProgress()"><option value="PRBC">PRBC</option><option value="PLT">PLT</option><option value="TFFP">TFFP</option><option value="Cryo">Cryo</option></select></div>
       </div>
-      <div class="btn-row">
-        <button class="secondary" type="button" onclick="goReleaseStep(1)">Back</button>
-        <button type="button" onclick="goReleaseStep(3)">Continue to Blood Units</button>
+      <div class="step-nav">
+        <button class="secondary" type="button" onclick="goReleaseStep(1)">← Back</button>
+        <button type="button" class="next" onclick="goReleaseStep(3)">Next: Blood Units →</button>
       </div>
     </div>
 
     <!-- Step 3 -->
     <div class="step-panel" data-step-panel="3">
-      <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">3. Blood Unit Entry and Verification</h3>
       <div class="alert" style="margin-bottom:12px"><b>Requested:</b> <span id="requestSummary">1 × PRBC</span><br><span style="font-size:12px">Enter/scan each unit number. Compatibility type must be selected from approved results — barcode scan does not set compatibility.</span></div>
       <div id="requestedUnitsList"></div>
       <div class="card" style="margin-top:14px;box-shadow:none"><h2>Units for This Issue</h2><div class="body">
+        <p class="field-hint" style="margin:0 0 10px">Optional check: add the units here to see them listed. Generate Tag in Step 4 adds them automatically.</p>
         <div id="unitList" class="empty-state">No units added yet.</div>
         <div class="btn-row">
           <button type="button" onclick="addRequestedUnitsToIssue();updateUnitProgress();">Add All Requested Units to Issue</button>
           <button class="secondary" type="button" onclick="clearIssueUnits();updateUnitProgress();">Clear Units</button>
         </div>
       </div></div>
-      <div class="btn-row">
-        <button class="secondary" type="button" onclick="goReleaseStep(2)">Back</button>
-        <button type="button" onclick="goReleaseStep(4)">Continue to Review</button>
+      <div class="step-nav">
+        <button class="secondary" type="button" onclick="goReleaseStep(2)">← Back</button>
+        <button type="button" class="next" onclick="goReleaseStep(4)">Next: Review &amp; Print →</button>
       </div>
     </div>
 
     <!-- Step 4 -->
     <div class="step-panel" data-step-panel="4">
-      <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">4. Review and Document Generation</h3>
       <div id="reviewSummary" class="review-grid" style="margin-bottom:14px"></div>
       <div class="alert warn" style="margin-bottom:14px">Confirm patient identity, unit numbers, and compatibility selections before generating documents. Tag print (Zebra 2.71 × 5.13 in) and A4 Issue Report print are separate.</div>
-      <div class="btn-row">
-        <button class="secondary" type="button" onclick="goReleaseStep(3)">Back</button>
-        <button type="button" onclick="generate()">Generate Compatibility Tag</button>
-        <button class="printbtn" type="button" onclick="printAllTagsDirect()">Print All Tags — Zebra</button>
-        <button class="secondary" type="button" onclick="show('issueReport')">Open Issue Report</button>
+      <div class="step-nav">
+        <button class="secondary" type="button" onclick="goReleaseStep(3)">← Back</button>
+        <span class="spacer"></span>
         <button class="secondary" type="button" onclick="newTag()">New Tag</button>
+        <button class="secondary" type="button" onclick="show('issueReport')">Open Issue Report</button>
+        <button class="printbtn" type="button" onclick="printAllTagsDirect()">Print All Tags — Zebra</button>
+        <button type="button" class="next" onclick="generate()">Generate Tag</button>
       </div>
     </div>
 
@@ -832,16 +852,15 @@ function goReleaseStep(step){
     p.classList.toggle('active', parseInt(p.getAttribute('data-step-panel'),10)===step);
   });
   updateReleaseBadge(); updateUnitProgress();
-  const tip=$('stepMsg');
-  if(tip){
-    tip.className='alert info';
-    tip.textContent={
-      1:'Identify the patient clearly. File number and name default to UNKNOWN only when unavailable.',
-      2:'Capture release context. Technologist ID is required before documents can be generated.',
-      3:'Enter or scan unit numbers. Do not infer compatibility from the barcode — select the approved result.',
-      4:'Review all fields, then generate tags and print documents on the correct pathway.'
-    }[step]||tip.textContent;
-  }
+  const info={
+    1:['Patient Information','Enter or scan the patient file number and name. Leave UNKNOWN only if they are not available.'],
+    2:['Request Details','Check your technologist ID, choose Routine or Emergency, and enter the doctor and the number of units requested.'],
+    3:['Blood Units','Scan or type each blood unit number, then choose its compatibility from the approved result. The barcode does not decide compatibility.'],
+    4:['Review & Print','Check everything below, then press Generate Tag. After that you can print the tags and the issue report.']
+  }[step];
+  if($('stepCount')) $('stepCount').textContent='Step '+step+' of 4';
+  if($('stepTitle')) $('stepTitle').textContent=info[0];
+  if($('stepMsg')) $('stepMsg').textContent=info[1];
   if(step===1) $('file')?.focus();
   if(step===2) $('tech')?.focus();
   if(step===3){ const first=document.querySelector('.req-unit'); if(first) first.focus(); }
