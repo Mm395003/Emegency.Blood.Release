@@ -199,7 +199,7 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 @page tagPage {size:2.71in 5.13in;margin:0}
 @page issuePage {size:A4 portrait;margin:6mm}
 
-.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.filterbar .date-field{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}.filterbar .date-field input{min-width:150px}.date-quick{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-4px 0 12px}.date-quick button{padding:6px 12px;font-size:13px}.request-tag{font-size:13px;color:var(--muted);margin-left:auto;margin-right:10px}.request-tag b{color:var(--navy);font-size:14px;letter-spacing:.02em}.hist-count{margin-left:auto;font-size:13px;color:var(--muted)}@media(max-width:760px){.filterbar .date-field{flex:1 1 45%}.hist-count{margin-left:0;width:100%}}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.filterbar .date-field{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}.filterbar .date-field input{min-width:150px}.date-quick{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-4px 0 12px}.date-quick button{padding:6px 12px;font-size:13px}.field-hint{font-size:12px;color:var(--muted);margin-top:4px}.request-tag{font-size:13px;color:var(--muted);margin-left:auto;margin-right:10px}.request-tag b{color:var(--navy);font-size:14px;letter-spacing:.02em}.hist-count{margin-left:auto;font-size:13px;color:var(--muted)}@media(max-width:760px){.filterbar .date-field{flex:1 1 45%}.hist-count{margin-left:0;width:100%}}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
 @media(max-width:800px){.dash-grid{grid-template-columns:1fr}}
 
 .login-overlay{position:fixed;inset:0;background:rgba(20,10,12,.55);z-index:50;align-items:center;justify-content:center}
@@ -425,7 +425,7 @@ body:has(#home.active) main{margin:0;padding:0}
     <div class="step-panel" data-step-panel="2">
       <h3 style="margin:0 0 12px;font-size:16px;color:var(--navy)">2. Release Details</h3>
       <div class="grid">
-        <div><label for="tech">Technologist ID *</label><input id="tech" required><div class="field-error" id="err_tech"></div></div>
+        <div><label for="tech">Technologist ID *</label><input id="tech" required onchange="rememberTechName()" onblur="rememberTechName()"><div class="field-hint" id="techHint"></div><div class="field-error" id="err_tech"></div></div>
         <div><label for="releaseType">Release Type *</label><select id="releaseType" onchange="updateReleaseBadge()"><option value="ROUTINE">Routine</option><option value="EMERGENCY" selected>Emergency / Urgent</option></select></div>
         <div><label for="doctorName">Doctor Name</label><input id="doctorName" placeholder="Enter doctor name"></div>
         <div><label for="doctorId">Doctor ID</label><input id="doctorId" placeholder="Enter doctor ID"></div>
@@ -565,7 +565,13 @@ function applyAdminUI(){
   if(hu) hu.textContent=signedIn?('Signed in as '+u.username+(isAdmin()?' (admin)':'')):'';
   const so=$('signOutBtn'); if(so) so.style.display=signedIn?'inline-flex':'none';
   bindLogoutButtons();
+  applyTechName();
 }
+function techNameKey(){const u=getUser();return u&&u.username?'techName:'+String(u.username).toLowerCase():''}
+function savedTechName(){const k=techNameKey();try{return k?localStorage.getItem(k)||'':''}catch(e){return ''}}
+function rememberTechName(){const k=techNameKey(),v=($('tech')?.value||'').trim();if(!k)return;try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}updateTechHint()}
+function updateTechHint(){const h=$('techHint'),u=getUser();if(!h)return;h.textContent=!(u&&u.username)?'':savedTechName()?'Saved for '+u.username+' — filled in automatically every time.':'Enter it once — it will be remembered for '+u.username+'.'}
+function applyTechName(){const t=$('tech');if(!t)return;t.value=savedTechName();updateTechHint()}
 function doLogout(ev){
   if(ev&&ev.preventDefault) ev.preventDefault();
   if(ev&&ev.stopPropagation) ev.stopPropagation();
@@ -936,6 +942,7 @@ function printCurrentPreviewTag(){
 
 function renderUnitList(){const a=getIssueUnits();$('unitList').innerHTML=a.length?'<table class="hist"><tr><th>#</th><th>Unit</th><th>Component</th><th>Donor Group</th><th>Compatibility</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${x.status}</td><td><button class="secondary" onclick="removeIssueUnit(${i})">Remove</button></td></tr>`).join('')+'</table>':'No units added yet.'}
 function generate(){
+  rememberTechName();
   const req=[['tech','Technologist ID']]; const m=req.filter(x=>!$(x[0]).value.trim());
   if(m.length){$('msg').className='message error no-print';$('msg').textContent='REQUIRED: '+m.map(x=>x[1]).join(', '); setFieldError('tech','Technologist ID is required.'); goReleaseStep(2); return}
   const rows=collectRequestedUnits(); if(!rows.length){alert('Add at least one requested unit.');return}
@@ -967,7 +974,7 @@ function newTag(){
   show('new');
 }
 function openCreateTag(){if(getIssueUnits().length)newTag();else show('new')}
-function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button'&&i.id!=='printAgentUrl') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value='';$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}
+function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button'&&i.id!=='printAgentUrl') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value=savedTechName();$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}
 function getHistory(){try{const a=JSON.parse(localStorage.getItem('ctags')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function setHistRange(daysBack){const from=$('histFrom'),to=$('histTo');if(daysBack===null){from.value='';to.value=''}else{const d=new Date();to.value=ymd(d);d.setDate(d.getDate()-daysBack);from.value=ymd(d)}historyView()}

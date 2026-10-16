@@ -83,3 +83,9 @@ def test_request_number_saved_and_new_tag_resets():
     new_tag = HTML.split("function newTag(){", 1)[1].split("\nfunction ", 1)[0]
     for step in ["clearForm()", "clearIssueUnits()", "setItem('currentRequestNo'"]:
         assert step in new_tag
+
+
+def test_technologist_name_remembered_per_user():
+    assert "function savedTechName" in HTML and "'techName:'" in HTML
+    assert "$('tech').value=savedTechName();" in HTML
+    assert "$('tech').value='';" not in HTML
