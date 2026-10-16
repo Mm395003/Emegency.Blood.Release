@@ -63,7 +63,7 @@ def test_homepage_hero_and_three_cards():
 
 
 def test_nav_items_and_admin_gate():
-    for label in ["Home", "Create Tag", "Tag Preview", "Issue Report", "History", "Admin"]:
+    for label in ["Home", "Create Tag", "Requests", "Tag Preview", "Issue Report", "History", "Admin"]:
         assert f"<span>{label}</span>" in HTML
     assert "<span>Audit Trail</span>" not in HTML
     assert 'id="usersNav"' in HTML and 'style="display:none"' in HTML
@@ -89,3 +89,13 @@ def test_technologist_name_remembered_per_user():
     assert "function savedTechName" in HTML and "'techName:'" in HTML
     assert "$('tech').value=savedTechName();" in HTML
     assert "$('tech').value='';" not in HTML
+
+
+def test_request_list_and_open_request():
+    assert '<section id="requests" class="page">' in HTML
+    assert '<section id="requestDetail" class="page">' in HTML
+    assert "function requestGroups" in HTML and "function openRequest" in HTML
+    open_fn = HTML.split("function openRequest(no){", 1)[1].split("\nfunction ", 1)[0]
+    assert "setIssueUnits(" in open_fn
+    assert "saveHistoryRecord" not in open_fn
+    assert "pg:$('pg')?.value" in HTML and "exp:x.exp" in HTML

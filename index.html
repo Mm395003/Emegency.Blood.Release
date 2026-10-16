@@ -291,7 +291,7 @@ body:has(#home.active) main{margin:0;padding:0}
 .action-card.primary .action-desc{color:rgba(255,255,255,.88)}
 .action-arrow{position:absolute;right:24px;bottom:24px;width:24px;height:24px}
 
-@media(max-width:1240px){.header-userbar #headerUser{display:none}}
+@media(max-width:1380px){.header-userbar #headerUser{display:none}}
 @media(max-width:1100px){
   .header{flex-wrap:wrap;row-gap:0;padding:8px 20px 0}
   .header .brand{min-height:48px}
@@ -339,6 +339,7 @@ body:has(#home.active) main{margin:0;padding:0}
   <nav class="nav no-print" id="mainNav" aria-label="Main">
     <button type="button" data-page="home" class="active" onclick="show('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>Home</span></button>
     <button type="button" data-page="new" onclick="openCreateTag()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/></svg><span>Create Tag</span></button>
+    <button type="button" data-page="requests" onclick="show('requests')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span>Requests</span></button>
     <button type="button" data-page="tagPage" onclick="show('tagPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Tag Preview</span></button>
     <button type="button" data-page="issueReport" onclick="show('issueReport')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg><span>Issue Report</span></button>
     <button type="button" data-page="history" onclick="show('history')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg><span>History</span></button>
@@ -502,6 +503,27 @@ body:has(#home.active) main{margin:0;padding:0}
   <div id="tagPreviewList"></div>
 </section>
 
+<section id="requests" class="page">
+  <div class="card"><h2>All Requests</h2><div class="body">
+    <div class="filterbar no-print"><input id="reqSearch" placeholder="Search request number, patient, file, unit" oninput="requestsView()"><label class="date-field">From<input id="reqFrom" type="date" onchange="requestsView()" aria-label="From date"></label><label class="date-field">To<input id="reqTo" type="date" onchange="requestsView()" aria-label="To date"></label><select id="reqType" onchange="requestsView()"><option value="ALL">All Types</option><option value="ROUTINE">Routine</option><option value="EMERGENCY">Emergency</option></select></div>
+    <div class="date-quick no-print"><span id="reqCount" class="hist-count" aria-live="polite"></span></div>
+    <div id="requestsList" class="empty-state">No requests yet.</div>
+  </div></div>
+</section>
+
+<section id="requestDetail" class="page">
+  <div class="card"><h2>Request <span id="rdNo">—</span></h2><div class="body">
+    <div id="rdSummary" class="review-grid" style="margin-bottom:14px"></div>
+    <div id="rdUnits"></div>
+    <div class="step-nav">
+      <button class="secondary" type="button" onclick="show('requests')">← All Requests</button>
+      <span class="spacer"></span>
+      <button class="secondary" type="button" onclick="show('issueReport')">View Issue Report</button>
+      <button type="button" class="next" onclick="show('tagPage')">View Tags</button>
+    </div>
+  </div></div>
+</section>
+
 <section id="history" class="page">
   <div class="card"><h2>Tag History</h2><div class="body">
     <div class="filterbar no-print"><input id="histSearch" placeholder="Search patient, file, unit, technologist" oninput="historyView()"><label class="date-field">From<input id="histFrom" type="date" onchange="historyView()" aria-label="From date"></label><label class="date-field">To<input id="histTo" type="date" onchange="historyView()" aria-label="To date"></label><select id="histType" onchange="historyView()"><option value="ALL">All Types</option><option value="ROUTINE">Routine</option><option value="EMERGENCY">Emergency</option></select><button class="secondary" onclick="exportHistoryCSV()">Export CSV</button><button class="secondary" onclick="show('dashboard')">Dashboard</button></div>
@@ -589,7 +611,7 @@ function applyAdminUI(){
 }
 function techNameKey(){const u=getUser();return u&&u.username?'techName:'+String(u.username).toLowerCase():''}
 function savedTechName(){const k=techNameKey();try{return k?localStorage.getItem(k)||'':''}catch(e){return ''}}
-function rememberTechName(){const k=techNameKey(),v=($('tech')?.value||'').trim();if(!k)return;try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}updateTechHint()}
+function rememberTechName(){if(viewingRequest)return;const k=techNameKey(),v=($('tech')?.value||'').trim();if(!k)return;try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}updateTechHint()}
 function updateTechHint(){const h=$('techHint'),u=getUser();if(!h)return;h.textContent=!(u&&u.username)?'':savedTechName()?'Saved for '+u.username+' — filled in automatically every time.':'Enter it once — it will be remembered for '+u.username+'.'}
 function applyTechName(){const t=$('tech');if(!t)return;t.value=savedTechName();updateTechHint()}
 function doLogout(ev){
@@ -727,7 +749,7 @@ function focusId(id){$(id).focus()}
 function setNavOpen(open){const h=$('appHeader'),t=$('navToggle');if(!h)return;h.classList.toggle('nav-open',!!open);if(t)t.setAttribute('aria-expanded',open?'true':'false')}
 function toggleNav(){setNavOpen(!$('appHeader').classList.contains('nav-open'))}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')setNavOpen(false)});
-function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));setNavOpen(false);window.scrollTo(0,0);if(id==='history')historyView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView();if(id==='users')usersView();if(id==='new'){updateReleaseBadge();updateUnitProgress();if(releaseStep===4)renderReviewSummary();}}
+function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));setNavOpen(false);window.scrollTo(0,0);if(id==='history')historyView();if(id==='requests')requestsView();if(id==='audit')auditView();if(id==='dashboard')dashboardView();if(id==='issueReport')issueReportView();if(id==='users')usersView();if(id==='new'){updateReleaseBadge();updateUnitProgress();if(releaseStep===4)renderReviewSummary();}}
 function renderUsers(users){
   const list=$('usersList'), sel=$('pwUsername');
   if(!list) return;
@@ -905,7 +927,7 @@ function addRequestedUnitsToIssue(){
   for(const item of rows){if(merged.some(x=>x.unit===item.unit)){alert('This blood unit is already added: '+item.unit);return false;} merged.push(item); saveHistoryRecord(item);}
   setIssueUnits(merged); $('msg').className='message no-print'; $('msg').textContent='✓ '+rows.length+' UNIT(S) ADDED — READY FOR ISSUE REPORT';
 }
-function saveHistoryRecord(x){const record={requestNo:x.requestNo||currentRequestNo(),time:x.dt||now(),name:$('name').value.trim()||'—',file:$('file').value.trim()||'—',unit:x.unit||'—',status:x.status||'—',releaseType:$('releaseType')?.value||'ROUTINE',comp:x.comp||'—',dg:x.dg||'—',loc:$('loc').value||'—',tech:$('tech').value.trim()||'—',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN'};const a=getHistory();a.unshift(record);localStorage.setItem('ctags',JSON.stringify(a.slice(0,500)));addAudit('UNIT_ADDED',record);api('/api/history',{method:'POST',body:JSON.stringify({records:[record]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('ctags',JSON.stringify(d.records));historyView();dashboardView();}).catch(e=>{$('serverStatus').className='message error no-print';$('serverStatus').textContent='History saved on this device only — server error: '+e.message});historyView();dashboardView()}
+function saveHistoryRecord(x){const record={requestNo:x.requestNo||currentRequestNo(),time:x.dt||now(),name:$('name').value.trim()||'—',file:$('file').value.trim()||'—',pg:$('pg')?.value||'—',unit:x.unit||'—',exp:x.exp||'—',status:x.status||'—',releaseType:$('releaseType')?.value||'ROUTINE',comp:x.comp||'—',dg:x.dg||'—',loc:$('loc').value||'—',tech:$('tech').value.trim()||'—',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN'};const a=getHistory();a.unshift(record);localStorage.setItem('ctags',JSON.stringify(a.slice(0,500)));addAudit('UNIT_ADDED',record);api('/api/history',{method:'POST',body:JSON.stringify({records:[record]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('ctags',JSON.stringify(d.records));historyView();dashboardView();}).catch(e=>{$('serverStatus').className='message error no-print';$('serverStatus').textContent='History saved on this device only — server error: '+e.message});historyView();dashboardView()}
 function addAudit(action,x={}){const row={requestNo:x.requestNo||currentRequestNo(),time:now(),action,user:$('tech')?.value.trim()||'—',patient:$('name')?.value.trim()||'—',file:$('file')?.value.trim()||'—',unit:x.unit||'—',releaseType:x.releaseType||'ROUTINE',doctorName:$('doctorName')?.value.trim()||'—',doctorId:$('doctorId')?.value.trim()||'—',callTime:$('callTime')?.value||'—',age:$('age')?.value||'—',sex:$('sex')?.value||'UNKNOWN',details:x.details||''};let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]');if(!Array.isArray(a))a=[]}catch(e){a=[]}a.unshift(row);localStorage.setItem('auditTrail',JSON.stringify(a.slice(0,1000)));api('/api/audit',{method:'POST',body:JSON.stringify({records:[row]})}).then(d=>{if(Array.isArray(d.records))localStorage.setItem('auditTrail',JSON.stringify(d.records));auditView();}).catch(()=>{})}
 function removeIssueUnit(i){const a=getIssueUnits();a.splice(i,1);setIssueUnits(a)}
 function clearIssueUnits(){sessionStorage.removeItem('issueUnits');renderUnitList();renderTagPreviews()}
@@ -1004,6 +1026,7 @@ function requestHasUnsavedEntries(){if(getIssueUnits().length)return false;const
 function newTag(){
   if(requestHasUnsavedEntries()&&!confirm('This request has entries that have not been generated yet. Start a new tag and clear them?'))return;
   const prev=currentRequestNo(),needNew=requestNoUsed(prev);
+  viewingRequest=false;
   clearForm();
   clearIssueUnits();
   const d=new Date();$('callTime').value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
@@ -1011,6 +1034,31 @@ function newTag(){
   $('msg').className='message no-print';$('msg').textContent='READY — ENTER PATIENT AND BLOOD UNIT INFORMATION';
   (needNew?allocateRequestNo():ensureRequestNo()).then(no=>addAudit('NEW_REQUEST',{requestNo:no,details:'Started '+no+' (previous '+prev+')'}));
   show('new');
+}
+function escHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function requestGroups(){const m=new Map();getHistory().forEach(r=>{const no=r.requestNo;if(!no||no==='—')return;if(!m.has(no))m.set(no,[]);m.get(no).push(r)});return [...m.entries()].map(([no,recs])=>{recs.reverse().sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')));return{no,recs,first:recs[0],time:recs[0].time||''}}).sort((a,b)=>b.time.localeCompare(a.time)||b.no.localeCompare(a.no))}
+function requestsView(){const all=requestGroups(),q=($('reqSearch')?.value||'').toLowerCase(),type=$('reqType')?.value||'ALL';let from=$('reqFrom')?.value||'',to=$('reqTo')?.value||'';if(from&&to&&from>to)[from,to]=[to,from];
+  const f=all.filter(g=>{const day=g.time.slice(0,10),t=g.first.releaseType||'ROUTINE';return(type==='ALL'||t===type)&&(!from||day>=from)&&(!to||day<=to)&&(!q||(g.no+' '+g.recs.map(r=>Object.values(r).join(' ')).join(' ')).toLowerCase().includes(q))});
+  if($('reqCount'))$('reqCount').textContent=all.length?`Showing ${f.length} of ${all.length} requests`:'';
+  $('requestsList').innerHTML=f.length?'<div class="table-wrap"><table class="hist"><tr><th>Request No.</th><th>Date / Time</th><th>Patient</th><th>File</th><th>Type</th><th>Units</th><th>Technologist</th><th></th></tr>'+f.map(g=>{const x=g.first,t=x.releaseType||'ROUTINE';return `<tr><td style="white-space:nowrap"><b>${escHtml(g.no)}</b></td><td style="white-space:nowrap">${escHtml(g.time||'—')}</td><td>${escHtml(x.name||'—')}</td><td>${escHtml(x.file||'—')}</td><td><span class="badge ${t==='EMERGENCY'?'warn':'info'}">${t==='EMERGENCY'?'Emergency':'Routine'}</span></td><td>${g.recs.length} × ${escHtml([...new Set(g.recs.map(r=>r.comp||'—'))].join(', '))}</td><td>${escHtml(x.tech||'—')}</td><td><button type="button" onclick="openRequest('${escHtml(g.no)}')">Open</button></td></tr>`}).join('')+'</table></div>':'<div class="empty-state">'+(all.length?'No matching requests.':'No requests yet. Requests appear here after you generate a tag.')+'</div>'}
+var viewingRequest=false;
+function openRequest(no){
+  const g=requestGroups().find(x=>x.no===no);if(!g){alert('Request '+no+' was not found.');return}
+  if(currentRequestNo()!==no&&requestHasUnsavedEntries()&&!confirm('The tag you are creating has entries that have not been generated yet. Open request '+no+' and clear them?'))return;
+  const x=g.first,val=(v,d)=>v&&v!=='—'?v:d;
+  viewingRequest=true;
+  $('file').value=val(x.file,'UNKNOWN');$('name').value=val(x.name,'UNKNOWN');$('age').value=val(x.age,'');$('sex').value=val(x.sex,'UNKNOWN');
+  $('pg').value=val(x.pg,'UNKNOWN');$('loc').value=val(x.loc,'ER');$('tech').value=val(x.tech,'');$('releaseType').value=x.releaseType||'ROUTINE';
+  $('doctorName').value=val(x.doctorName,'');$('doctorId').value=val(x.doctorId,'');$('callTime').value=val(x.callTime,'');
+  setIssueUnits(g.recs.map(r=>({unit:r.unit,comp:r.comp||'—',dg:r.dg||'—',exp:r.exp||'—',status:r.status||'—',dt:r.time||''})));
+  localStorage.setItem('currentRequestNo',no);localStorage.setItem('currentRequestNoSource','server');
+  renderRequestNo();updateReleaseBadge();updateUnitProgress();renderReviewSummary();issueReportView();
+  $('rdNo').textContent=no;
+  const t=x.releaseType||'ROUTINE';
+  $('rdSummary').innerHTML=[['Date / Time',g.time||'—'],['Release Type',t==='EMERGENCY'?'Emergency':'Routine'],['Patient',x.name],['File Number',x.file],['Age / Sex',(val(x.age,'—'))+' / '+(val(x.sex,'—'))],['Patient Blood Group',val(x.pg,'Not recorded')],['Location',x.loc],['Technologist',x.tech],['Doctor',(val(x.doctorName,'—'))+' / '+(val(x.doctorId,'—'))],['Call Received',x.callTime]].map(([k,v])=>`<div class="kv"><span>${k}</span><b>${escHtml(v||'—')}</b></div>`).join('');
+  $('rdUnits').innerHTML='<div class="table-wrap"><table class="hist"><tr><th>#</th><th>Unit</th><th>Component</th><th>Donor Group</th><th>Expiry</th><th>Compatibility</th></tr>'+g.recs.map((r,i)=>`<tr><td>${i+1}</td><td>${escHtml(r.unit)}</td><td>${escHtml(r.comp||'—')}</td><td>${escHtml(r.dg||'—')}</td><td>${escHtml(formatExpiryDate(r.exp||'—'))}</td><td>${escHtml(r.status||'—')}</td></tr>`).join('')+'</table></div>'+(x.pg?'':'<p class="field-hint">This request was saved before patient blood group and expiry date were recorded, so those show as "—" on the tag.</p>');
+  addAudit('REQUEST_OPENED',{requestNo:no,details:'Opened request '+no+' from the request list'});
+  show('requestDetail');
 }
 function openCreateTag(){if(getIssueUnits().length||requestNoUsed(currentRequestNo()))newTag();else show('new')}
 function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button'&&i.id!=='printAgentUrl') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value=savedTechName();$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}
