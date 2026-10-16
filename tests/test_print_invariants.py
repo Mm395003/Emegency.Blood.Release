@@ -67,3 +67,9 @@ def test_nav_items_and_admin_gate():
         assert f"<span>{label}</span>" in HTML
     assert "<span>Audit Trail</span>" not in HTML
     assert 'id="usersNav"' in HTML and 'style="display:none"' in HTML
+
+
+def test_history_date_range_filter():
+    assert 'id="histFrom"' in HTML and 'id="histTo"' in HTML
+    assert "function filteredHistory" in HTML
+    assert "downloadCSV(filteredHistory()" in HTML
