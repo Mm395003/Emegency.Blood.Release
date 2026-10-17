@@ -1072,7 +1072,7 @@ function dashboardView(){const a=getHistory(),d=now().slice(0,10);$('total').tex
 function exportHistoryCSV(){downloadCSV(filteredHistory(),'blood_release_history.csv')}
 function exportAuditCSV(){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]')}catch(e){}downloadCSV(a,'blood_release_audit.csv')}
 function downloadCSV(a,name){if(!a.length){alert('No records to export.');return}const keys=[...new Set(a.flatMap(x=>Object.keys(x)))];const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[keys.map(esc).join(','),...a.map(x=>keys.map(k=>esc(x[k])).join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),aEl=document.createElement('a');aEl.href=url;aEl.download=name;aEl.click();URL.revokeObjectURL(url)}
-function issueReportView(){const a=getIssueUnits();$('ir_name').textContent=$('name').value.trim()||'—';$('ir_file').textContent=$('file').value.trim()||'—';$('ir_ageSex').textContent=(($('age')?.value||'—')+' / '+($('sex')?.value||'—'));$('ir_doctor').textContent=(($('doctorName')?.value.trim()||'—')+' / '+($('doctorId')?.value.trim()||'—'));$('ir_call').textContent=$('callTime')?.value||'—';$('ir_loc').textContent=$('loc').value||'—';$('ir_time').textContent=now();$('ir_count').textContent=a.length;$('ir_types').textContent=a.length?[...new Set(a.map(x=>x.comp))].join(', '):'—';$('ir_issuer').textContent=$('tech').value.trim()||'—';$('issueRows').innerHTML=a.length?a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${formatExpiryDate(x.exp)}</td><td>${x.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center">No units added.</td></tr>'}
+function issueReportView(){const a=getIssueUnits();$('ir_name').textContent=$('name').value.trim()||'—';$('ir_file').textContent=$('file').value.trim()||'—';$('ir_ageSex').textContent=(($('age')?.value||'—')+' / '+($('sex')?.value||'—'));$('ir_doctor').textContent=(($('doctorName')?.value.trim()||'—')+' / '+($('doctorId')?.value.trim()||'—'));$('ir_call').textContent=$('callTime')?.value||'—';$('ir_loc').textContent=$('loc').value||'—';$('ir_time').textContent=a.map(x=>x.dt).filter(Boolean).sort()[0]||now();$('ir_count').textContent=a.length;$('ir_types').textContent=a.length?[...new Set(a.map(x=>x.comp))].join(', '):'—';$('ir_issuer').textContent=$('tech').value.trim()||'—';$('issueRows').innerHTML=a.length?a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${formatExpiryDate(x.exp)}</td><td>${x.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center">No units added.</td></tr>'}
 
 
 function printAgentUrl(){return getPrintAgentUrl()}
@@ -1188,10 +1188,9 @@ async function printAllTagsDirect(){
   const req=[['tech','Technologist ID']];
   const m=req.filter(x=>!$(x[0]).value.trim());
   if(m.length){alert('REQUIRED: '+m.map(x=>x[1]).join(', '));return false;}
-  const dt=now();
   const bitmaps=units.map(x=>buildTagBitmap({
     name:$('name').value.trim(),file:$('file').value.trim(),unit:x.unit,pg:$('pg').value,dg:x.dg,
-    status:x.status,comp:x.comp,exp:x.exp,tech:$('tech').value.trim(),loc:$('loc').value,dt
+    status:x.status,comp:x.comp,exp:x.exp,tech:$('tech').value.trim(),loc:$('loc').value,dt:x.dt||now()
   }));
   try{
     const r=await fetch(printAgentUrl()+'/print/tag-bitmaps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bitmaps})});

@@ -99,3 +99,10 @@ def test_request_list_and_open_request():
     assert "setIssueUnits(" in open_fn
     assert "saveHistoryRecord" not in open_fn
     assert "pg:$('pg')?.value" in HTML and "exp:x.exp" in HTML
+
+
+def test_reopened_request_keeps_original_issue_time():
+    report = HTML.split("function issueReportView(){", 1)[1].split("\nfunction ", 1)[0]
+    assert "$('ir_time').textContent=now()" not in report
+    assert "x.dt" in report
+    assert "dt:x.dt||now()" in HTML
