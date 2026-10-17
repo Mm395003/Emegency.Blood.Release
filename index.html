@@ -393,7 +393,7 @@ body:has(#home.active) main{margin:0;padding:0}
 <div style="border:1.5px solid #444;border-radius:12px;padding:18px">
 <h3 style="margin-top:0">Blood Issue Report</h3>
 <p style="font-size:12px;color:#666">Paper: <b>A4 Portrait</b><br>Printer: <b>A4 Printer</b><br>Scale: <b>100%</b></p>
-<button onclick="printIssueFromCenter(false)">Print Routine Issue Report</button><button class="secondary" onclick="printIssueFromCenter(true)">Print Emergency Release Report</button>
+<button class="issue-print-btn" type="button" onclick="printIssueFromCenter(isEmergencyRequest())">Print Issue Report</button>
 </div>
 </div>
 <div class="alert warn" style="margin-top:16px"><b>Direct Zebra mode:</b> Compatibility Tags are sent to <b>ZDesigner GK420t</b> through the Windows Print Agent. No browser print dialog is used. Issue Reports remain normal A4 printing.</div>
@@ -530,7 +530,7 @@ body:has(#home.active) main{margin:0;padding:0}
       <div id="rdTags"></div>
     </div>
     <div class="rd-panel" data-rd-panel="report">
-      <div class="actions no-print" style="margin-bottom:14px"><button class="printbtn" type="button" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" type="button" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button></div>
+      <div class="actions no-print" style="margin-bottom:14px"><button class="printbtn issue-print-btn" type="button" onclick="printIssueReport(isEmergencyRequest())">Print Issue Report — A4</button></div>
       <div id="rdReport"></div>
     </div>
   </div></div>
@@ -549,7 +549,7 @@ body:has(#home.active) main{margin:0;padding:0}
 </section>
 
 <section id="issueReport" class="page">
-<div class="actions no-print"><button class="printbtn" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button><button class="secondary" onclick="show('new')">Back</button><button type="button" onclick="newTag()">New Tag</button></div>
+<div class="actions no-print"><button class="printbtn issue-print-btn" type="button" onclick="printIssueReport(isEmergencyRequest())">Print Issue Report — A4</button><button class="secondary" onclick="show('new')">Back</button><button type="button" onclick="newTag()">New Tag</button></div>
 <div class="card"><div class="body"><div id="issuePrint" class="issue-report">
 <div class="ir-header"><div><div class="ir-title">BLOOD BANK</div><div class="ir-subtitle">BLOOD ISSUE REPORT</div></div></div>
 <div class="ir-patient">
@@ -824,6 +824,7 @@ function setIssueUnits(a){sessionStorage.setItem('issueUnits',JSON.stringify(a))
 let releaseStep=1;
 function updateReleaseBadge(){
   const t=$('releaseType')?.value||'EMERGENCY';
+  syncIssueReportType();
   const b=$('releaseTypeBadge'); if(!b) return;
   b.textContent=t==='EMERGENCY'?'Emergency':'Routine';
   b.className='badge '+(t==='EMERGENCY'?'warn':'info');
@@ -1092,7 +1093,7 @@ function dashboardView(){const a=getHistory(),d=now().slice(0,10);$('total').tex
 function exportHistoryCSV(){downloadCSV(filteredHistory(),'blood_release_history.csv')}
 function exportAuditCSV(){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]')}catch(e){}downloadCSV(a,'blood_release_audit.csv')}
 function downloadCSV(a,name){if(!a.length){alert('No records to export.');return}const keys=[...new Set(a.flatMap(x=>Object.keys(x)))];const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[keys.map(esc).join(','),...a.map(x=>keys.map(k=>esc(x[k])).join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),aEl=document.createElement('a');aEl.href=url;aEl.download=name;aEl.click();URL.revokeObjectURL(url)}
-function issueReportView(){const a=getIssueUnits();$('ir_name').textContent=$('name').value.trim()||'—';$('ir_file').textContent=$('file').value.trim()||'—';$('ir_ageSex').textContent=(($('age')?.value||'—')+' / '+($('sex')?.value||'—'));$('ir_doctor').textContent=(($('doctorName')?.value.trim()||'—')+' / '+($('doctorId')?.value.trim()||'—'));$('ir_call').textContent=$('callTime')?.value||'—';$('ir_loc').textContent=$('loc').value||'—';$('ir_time').textContent=a.map(x=>x.dt).filter(Boolean).sort()[0]||now();$('ir_count').textContent=a.length;$('ir_types').textContent=a.length?[...new Set(a.map(x=>x.comp))].join(', '):'—';$('ir_issuer').textContent=$('tech').value.trim()||'—';$('issueRows').innerHTML=a.length?a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${formatExpiryDate(x.exp)}</td><td>${x.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center">No units added.</td></tr>'}
+function issueReportView(){const a=getIssueUnits();syncIssueReportType();$('ir_name').textContent=$('name').value.trim()||'—';$('ir_file').textContent=$('file').value.trim()||'—';$('ir_ageSex').textContent=(($('age')?.value||'—')+' / '+($('sex')?.value||'—'));$('ir_doctor').textContent=(($('doctorName')?.value.trim()||'—')+' / '+($('doctorId')?.value.trim()||'—'));$('ir_call').textContent=$('callTime')?.value||'—';$('ir_loc').textContent=$('loc').value||'—';$('ir_time').textContent=a.map(x=>x.dt).filter(Boolean).sort()[0]||now();$('ir_count').textContent=a.length;$('ir_types').textContent=a.length?[...new Set(a.map(x=>x.comp))].join(', '):'—';$('ir_issuer').textContent=$('tech').value.trim()||'—';$('issueRows').innerHTML=a.length?a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${formatExpiryDate(x.exp)}</td><td>${x.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center">No units added.</td></tr>'}
 
 
 function printAgentUrl(){return getPrintAgentUrl()}
@@ -1223,6 +1224,8 @@ function printTagFromCenter(){
   show('tagPage');
   printTag();
 }
+function isEmergencyRequest(){return ($('releaseType')?.value||'ROUTINE')==='EMERGENCY'}
+function syncIssueReportType(){const em=isEmergencyRequest();$('issuePrint')?.classList.toggle('emergency-mode',em);document.querySelectorAll('.issue-print-btn').forEach(b=>{const a4=b.classList.contains('printbtn')?' — A4':'';b.textContent=(em?'Print Emergency Release Report':'Print Routine Issue Report')+a4})}
 function printIssueFromCenter(emergency=false){
   if(!getIssueUnits().length){alert('Add at least one blood unit before printing the Issue Report.');return}
   issueReportView();
@@ -1247,7 +1250,7 @@ function printIssueReport(emergency=false){
   setTimeout(()=>window.print(),150);
 }
 window.addEventListener('afterprint',()=>{
-  document.body.classList.remove('print-tag','print-issue'); $('issuePrint').classList.remove('emergency-mode');
+  document.body.classList.remove('print-tag','print-issue'); syncIssueReportType();
 });
 $('file').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('tech').focus()}});renderRequestNo();ensureRequestNo();renderUnitList();renderTagPreviews();renderRequestedUnits();historyView();dashboardView();auditView();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);
 if($('printAgentUrl')) $('printAgentUrl').value=getPrintAgentUrl();

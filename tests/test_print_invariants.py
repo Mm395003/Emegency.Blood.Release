@@ -113,3 +113,10 @@ def test_request_detail_shows_tags_and_report_inline():
     assert 'data-rd-panel="tags"' in detail and 'data-rd-panel="report"' in detail
     assert "show('tagPage')" not in detail and "show('issueReport')" not in detail
     assert 'id="issuePrint"' not in detail
+
+
+def test_single_issue_report_button_follows_release_type():
+    assert "printIssueReport(false)" not in HTML and "printIssueReport(true)" not in HTML
+    assert "printIssueFromCenter(false)" not in HTML and "printIssueFromCenter(true)" not in HTML
+    assert HTML.count("printIssueReport(isEmergencyRequest())") == 2
+    assert "function syncIssueReportType" in HTML
