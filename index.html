@@ -199,7 +199,7 @@ table.hist th{color:var(--muted);font-size:11.5px;text-transform:uppercase;lette
 @page tagPage {size:2.71in 5.13in;margin:0}
 @page issuePage {size:A4 portrait;margin:6mm}
 
-.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.filterbar .date-field{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}.filterbar .date-field input{min-width:150px}.date-quick{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-4px 0 12px}.date-quick button{padding:6px 12px;font-size:13px}.field-hint{font-size:12px;color:var(--muted);margin-top:4px}.request-tag{font-size:13px;color:var(--muted);margin-left:auto;margin-right:10px}.request-tag b{color:var(--navy);font-size:14px;letter-spacing:.02em}.hist-count{margin-left:auto;font-size:13px;color:var(--muted)}@media(max-width:760px){.filterbar .date-field{flex:1 1 45%}.hist-count{margin-left:0;width:100%}}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filterbar input,.filterbar select{flex:1;min-width:180px}.filterbar .date-field{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}.filterbar .date-field input{min-width:150px}.date-quick{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-4px 0 12px}.date-quick button{padding:6px 12px;font-size:13px}.rd-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}.rd-tabs{display:inline-flex;background:#EEF2F7;border:1px solid var(--line);border-radius:10px;padding:4px;gap:4px}.rd-tabs button{all:unset;cursor:pointer;padding:9px 18px;border-radius:7px;font-weight:700;font-size:15px;color:var(--muted)}.rd-tabs button:hover{color:var(--navy)}.rd-tabs button:focus-visible{outline:3px solid var(--navy-light);outline-offset:2px}.rd-tabs button[aria-selected="true"]{background:#fff;color:var(--crimson);box-shadow:0 1px 3px rgba(14,39,68,.15)}.rd-panel{display:none}.rd-panel.active{display:block}@media(max-width:700px){.rd-tabs{width:100%}.rd-tabs button{flex:1;text-align:center;padding:9px 6px}}.field-hint{font-size:12px;color:var(--muted);margin-top:4px}.request-tag{font-size:13px;color:var(--muted);margin-left:auto;margin-right:10px}.request-tag b{color:var(--navy);font-size:14px;letter-spacing:.02em}.hist-count{margin-left:auto;font-size:13px;color:var(--muted)}@media(max-width:760px){.filterbar .date-field{flex:1 1 45%}.hist-count{margin-left:0;width:100%}}.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.dash-grid>div{border:1px solid #bbb;padding:12px;border-radius:8px}.dash-grid h3{margin:0 0 8px;font-size:14px}.mini-stat{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:5px 0;font-size:12px}
 @media(max-width:800px){.dash-grid{grid-template-columns:1fr}}
 
 .login-overlay{position:fixed;inset:0;background:rgba(20,10,12,.55);z-index:50;align-items:center;justify-content:center}
@@ -513,13 +513,25 @@ body:has(#home.active) main{margin:0;padding:0}
 
 <section id="requestDetail" class="page">
   <div class="card"><h2>Request <span id="rdNo">—</span></h2><div class="body">
-    <div id="rdSummary" class="review-grid" style="margin-bottom:14px"></div>
-    <div id="rdUnits"></div>
-    <div class="step-nav">
+    <div class="rd-top no-print">
       <button class="secondary" type="button" onclick="show('requests')">← All Requests</button>
-      <span class="spacer"></span>
-      <button class="secondary" type="button" onclick="show('issueReport')">View Issue Report</button>
-      <button type="button" class="next" onclick="show('tagPage')">View Tags</button>
+      <div class="rd-tabs" role="tablist" aria-label="Request views">
+        <button type="button" role="tab" data-rd-tab="details" onclick="rdTab('details')">Details</button>
+        <button type="button" role="tab" data-rd-tab="tags" onclick="rdTab('tags')">Tags</button>
+        <button type="button" role="tab" data-rd-tab="report" onclick="rdTab('report')">Issue Report</button>
+      </div>
+    </div>
+    <div class="rd-panel" data-rd-panel="details">
+      <div id="rdSummary" class="review-grid" style="margin-bottom:14px"></div>
+      <div id="rdUnits"></div>
+    </div>
+    <div class="rd-panel" data-rd-panel="tags">
+      <div class="actions no-print" style="margin-bottom:14px"><button class="printbtn" type="button" onclick="printAllTagsDirect()">Print All Tags — Zebra</button></div>
+      <div id="rdTags"></div>
+    </div>
+    <div class="rd-panel" data-rd-panel="report">
+      <div class="actions no-print" style="margin-bottom:14px"><button class="printbtn" type="button" onclick="printIssueReport(false)">Print Routine Issue Report — A4</button><button class="printbtn" type="button" onclick="printIssueReport(true)">Print Emergency Release Report — A4</button></div>
+      <div id="rdReport"></div>
     </div>
   </div></div>
 </section>
@@ -1059,6 +1071,14 @@ function openRequest(no){
   $('rdUnits').innerHTML='<div class="table-wrap"><table class="hist"><tr><th>#</th><th>Unit</th><th>Component</th><th>Donor Group</th><th>Expiry</th><th>Compatibility</th></tr>'+g.recs.map((r,i)=>`<tr><td>${i+1}</td><td>${escHtml(r.unit)}</td><td>${escHtml(r.comp||'—')}</td><td>${escHtml(r.dg||'—')}</td><td>${escHtml(formatExpiryDate(r.exp||'—'))}</td><td>${escHtml(r.status||'—')}</td></tr>`).join('')+'</table></div>'+(x.pg?'':'<p class="field-hint">This request was saved before patient blood group and expiry date were recorded, so those show as "—" on the tag.</p>');
   addAudit('REQUEST_OPENED',{requestNo:no,details:'Opened request '+no+' from the request list'});
   show('requestDetail');
+  rdTab('details');
+}
+function stripIds(html){return html.replace(/\sid="[^"]*"/g,'')}
+function rdTab(tab){
+  if(tab==='tags'){renderTagPreviews();$('rdTags').innerHTML=stripIds($('tagPreviewList').innerHTML)}
+  if(tab==='report'){issueReportView();$('rdReport').innerHTML=stripIds($('issuePrint').outerHTML)}
+  document.querySelectorAll('[data-rd-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.rdTab===tab)));
+  document.querySelectorAll('[data-rd-panel]').forEach(p=>p.classList.toggle('active',p.dataset.rdPanel===tab));
 }
 function openCreateTag(){if(getIssueUnits().length||requestNoUsed(currentRequestNo()))newTag();else show('new')}
 function clearForm(){document.querySelectorAll('#new input').forEach(i=>{if(i.type!=='button'&&i.id!=='printAgentUrl') i.value='';});$('file').value='UNKNOWN';$('name').value='UNKNOWN';$('age').value='';$('sex').value='UNKNOWN';$('requestedUnits').value='1';$('requestedComp').value='PRBC';$('pg').value='UNKNOWN';$('loc').value='ER';$('tech').value=savedTechName();$('releaseType').value='EMERGENCY';$('doctorName').value='';$('doctorId').value='';renderRequestedUnits();updateReleaseBadge();updateUnitProgress();goReleaseStep(1);addAudit('FORM_CLEARED',{details:'New release form cleared'});}

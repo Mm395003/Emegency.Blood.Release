@@ -106,3 +106,10 @@ def test_reopened_request_keeps_original_issue_time():
     assert "$('ir_time').textContent=now()" not in report
     assert "x.dt" in report
     assert "dt:x.dt||now()" in HTML
+
+
+def test_request_detail_shows_tags_and_report_inline():
+    detail = HTML.split('<section id="requestDetail" class="page">', 1)[1].split("</section>", 1)[0]
+    assert 'data-rd-panel="tags"' in detail and 'data-rd-panel="report"' in detail
+    assert "show('tagPage')" not in detail and "show('issueReport')" not in detail
+    assert 'id="issuePrint"' not in detail
