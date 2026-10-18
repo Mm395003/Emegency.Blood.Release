@@ -136,8 +136,10 @@ def test_issue_report_shows_receiver_after_dispense():
     assert "fillReceivedBy(a)" in HTML
 
 
-def test_issue_report_prints_after_dispense():
+def test_issue_report_print_button_on_dispense_page():
     submit = HTML.split("async function submitDispense(){", 1)[1].split("\nfunction ", 1)[0]
-    assert "printRequestIssueReport(g.no)" in submit
+    assert "printRequestIssueReport(g.no)" not in submit
+    assert "printRequestIssueReport('${escHtml(g.no)}')" in submit
+    assert "printRequestIssueReport('${escHtml(d.requestNo)}')" in HTML
     fn = HTML.split("function printRequestIssueReport(no){", 1)[1].split("\nfunction ", 1)[0]
     assert "loadRequestIntoForm(g)" in fn and "printIssueReport(isEmergencyRequest())" in fn
