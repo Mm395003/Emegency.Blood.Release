@@ -602,7 +602,7 @@ body:has(#home.active) main{margin:0;padding:0}
 <table class="issue-table"><thead><tr><th>#</th><th>Blood Unit Number</th><th>Component</th><th>Donor Group</th><th>Expiry Date</th><th>Compatibility</th></tr></thead><tbody id="issueRows"><tr><td colspan="6" style="text-align:center">No units added.</td></tr></tbody></table>
 <div class="ir-signatures">
 <div class="signature-box"><strong>Issued By</strong><div class="sig-line"></div><div class="sig-label">Name / ID: <span id="ir_issuer">—</span></div><div class="sig-label">Signature: __________________________</div><div class="sig-label">Date / Time: _________________________</div></div>
-<div class="signature-box"><strong>Received By</strong><div class="sig-line"></div><div class="sig-label">Name / ID: __________________________</div><div class="sig-label">Signature: __________________________</div><div class="sig-label">Date / Time: _________________________</div></div>
+<div class="signature-box"><strong>Received By</strong><div class="sig-line"></div><div class="sig-label">Name / ID: <span id="ir_receiver">__________________________</span></div><div class="sig-label">Signature: __________________________</div><div class="sig-label">Date / Time: <span id="ir_receivedAt">_________________________</span></div></div>
 </div>
 <div class="ir-emergency" id="ir_emergency_statement">
 <div class="ir-emergency-title">Emergency Release Declaration</div>
@@ -1121,9 +1121,17 @@ function rdTab(tab){
   document.querySelectorAll('[data-rd-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.rdTab===tab)));
   document.querySelectorAll('[data-rd-panel]').forEach(p=>p.classList.toggle('active',p.dataset.rdPanel===tab));
 }
+function fillReceivedBy(units){
+  const no=currentRequestNo(),dmap=dispenseMap();
+  const recs=units.map(u=>dmap.get(no+'|'+u.unit)).filter(Boolean);
+  const who=[...new Set(recs.map(d=>d.receivedBy+(d.receivedId?' / '+d.receivedId:'')))];
+  const when=[...new Set(recs.map(d=>d.dispensedAt).filter(Boolean))].sort();
+  if($('ir_receiver'))$('ir_receiver').textContent=who.length?who.join('; '):'__________________________';
+  if($('ir_receivedAt'))$('ir_receivedAt').textContent=when.length?when.join('; '):'_________________________';
+}
 function getDispense(){try{const a=JSON.parse(localStorage.getItem('dispenseLog')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
 function dispenseMap(){const m=new Map();getDispense().forEach(d=>m.set(d.requestNo+'|'+d.unit,d));return m}
-async function loadDispense(){if(!getToken())return;try{const d=await api('/api/dispense');if(Array.isArray(d.records)){localStorage.setItem('dispenseLog',JSON.stringify(d.records));if($('dispense').classList.contains('active'))dispenseView()}}catch(e){}}
+async function loadDispense(){if(!getToken())return;try{const d=await api('/api/dispense');if(Array.isArray(d.records)){localStorage.setItem('dispenseLog',JSON.stringify(d.records));issueReportView();if($('dispense').classList.contains('active'))dispenseView()}}catch(e){}}
 var dspCurrentTab='waiting',dspFormNo=null;
 function dspTab(tab){dspCurrentTab=tab;document.querySelectorAll('[data-dsp-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.dspTab===tab)));document.querySelectorAll('[data-dsp-panel]').forEach(p=>p.classList.toggle('active',p.dataset.dspPanel===tab));document.querySelectorAll('.dsp-done-only').forEach(el=>el.style.display=tab==='done'?'':'none');dispenseView()}
 function waitingGroups(){const dmap=dispenseMap();return requestGroups().map(g=>({...g,pending:g.recs.filter(r=>!dmap.has(g.no+'|'+r.unit))})).filter(g=>g.pending.length)}
@@ -1171,7 +1179,7 @@ async function submitDispense(){
     if(Array.isArray(d.records))localStorage.setItem('dispenseLog',JSON.stringify(d.records));
     const rejected=d.rejected||[];
     records.filter(r=>!rejected.includes(r.unit)).forEach(r=>addAudit('UNIT_DISPENSED',{requestNo:r.requestNo,unit:r.unit,releaseType:r.releaseType,details:'Dispensed to '+r.receivedBy+(r.receivedId?' ('+r.receivedId+')':'')+' for '+r.destination}));
-    closeDispenseForm();
+    closeDispenseForm();issueReportView();
     $('dspMsg').className='dsp-msg'+(rejected.length?' error':'');
     $('dspMsg').textContent=(d.accepted?`✓ ${d.accepted} unit${d.accepted>1?'s':''} from ${g.no} dispensed to ${receivedBy}.`:'')+(rejected.length?' Already dispensed earlier: '+rejected.join(', ')+'.':'');
     dispenseView();
@@ -1192,7 +1200,7 @@ function dashboardView(){const a=getHistory(),d=now().slice(0,10);$('total').tex
 function exportHistoryCSV(){downloadCSV(filteredHistory(),'blood_release_history.csv')}
 function exportAuditCSV(){let a=[];try{a=JSON.parse(localStorage.getItem('auditTrail')||'[]')}catch(e){}downloadCSV(a,'blood_release_audit.csv')}
 function downloadCSV(a,name){if(!a.length){alert('No records to export.');return}const keys=[...new Set(a.flatMap(x=>Object.keys(x)))];const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[keys.map(esc).join(','),...a.map(x=>keys.map(k=>esc(x[k])).join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),aEl=document.createElement('a');aEl.href=url;aEl.download=name;aEl.click();URL.revokeObjectURL(url)}
-function issueReportView(){const a=getIssueUnits();syncIssueReportType();$('ir_name').textContent=$('name').value.trim()||'—';$('ir_file').textContent=$('file').value.trim()||'—';$('ir_ageSex').textContent=(($('age')?.value||'—')+' / '+($('sex')?.value||'—'));$('ir_doctor').textContent=(($('doctorName')?.value.trim()||'—')+' / '+($('doctorId')?.value.trim()||'—'));$('ir_call').textContent=$('callTime')?.value||'—';$('ir_loc').textContent=$('loc').value||'—';$('ir_time').textContent=a.map(x=>x.dt).filter(Boolean).sort()[0]||now();$('ir_count').textContent=a.length;$('ir_types').textContent=a.length?[...new Set(a.map(x=>x.comp))].join(', '):'—';$('ir_issuer').textContent=$('tech').value.trim()||'—';$('issueRows').innerHTML=a.length?a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${formatExpiryDate(x.exp)}</td><td>${x.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center">No units added.</td></tr>'}
+function issueReportView(){const a=getIssueUnits();syncIssueReportType();fillReceivedBy(a);$('ir_name').textContent=$('name').value.trim()||'—';$('ir_file').textContent=$('file').value.trim()||'—';$('ir_ageSex').textContent=(($('age')?.value||'—')+' / '+($('sex')?.value||'—'));$('ir_doctor').textContent=(($('doctorName')?.value.trim()||'—')+' / '+($('doctorId')?.value.trim()||'—'));$('ir_call').textContent=$('callTime')?.value||'—';$('ir_loc').textContent=$('loc').value||'—';$('ir_time').textContent=a.map(x=>x.dt).filter(Boolean).sort()[0]||now();$('ir_count').textContent=a.length;$('ir_types').textContent=a.length?[...new Set(a.map(x=>x.comp))].join(', '):'—';$('ir_issuer').textContent=$('tech').value.trim()||'—';$('issueRows').innerHTML=a.length?a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.comp}</td><td>${x.dg}</td><td>${formatExpiryDate(x.exp)}</td><td>${x.status}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center">No units added.</td></tr>'}
 
 
 function printAgentUrl(){return getPrintAgentUrl()}

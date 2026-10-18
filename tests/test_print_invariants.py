@@ -127,3 +127,8 @@ def test_dispense_page_requires_receiver_and_checks():
     submit = HTML.split("async function submitDispense(){", 1)[1].split("\nfunction ", 1)[0]
     assert "dspChkId" in submit and "dspChkInspect" in submit and "receivedBy" in submit
     assert "/api/dispense" in submit
+
+
+def test_issue_report_shows_receiver_after_dispense():
+    assert 'id="ir_receiver"' in HTML and 'id="ir_receivedAt"' in HTML
+    assert "fillReceivedBy(a)" in HTML
