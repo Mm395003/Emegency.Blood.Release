@@ -96,7 +96,9 @@ def test_request_list_and_open_request():
     assert '<section id="requestDetail" class="page">' in HTML
     assert "function requestGroups" in HTML and "function openRequest" in HTML
     open_fn = HTML.split("function openRequest(no){", 1)[1].split("\nfunction ", 1)[0]
-    assert "setIssueUnits(" in open_fn
+    assert "loadRequestIntoForm(g)" in open_fn
+    load_fn = HTML.split("function loadRequestIntoForm(g){", 1)[1].split("\nfunction ", 1)[0]
+    assert "setIssueUnits(" in load_fn and "saveHistoryRecord" not in load_fn
     assert "saveHistoryRecord" not in open_fn
     assert "pg:$('pg')?.value" in HTML and "exp:x.exp" in HTML
 
@@ -118,7 +120,7 @@ def test_request_detail_shows_tags_and_report_inline():
 def test_single_issue_report_button_follows_release_type():
     assert "printIssueReport(false)" not in HTML and "printIssueReport(true)" not in HTML
     assert "printIssueFromCenter(false)" not in HTML and "printIssueFromCenter(true)" not in HTML
-    assert HTML.count("printIssueReport(isEmergencyRequest())") == 2
+    assert HTML.count('onclick="printIssueReport(isEmergencyRequest())"') == 2
     assert "function syncIssueReportType" in HTML
 
 
@@ -132,3 +134,10 @@ def test_dispense_page_requires_receiver_and_checks():
 def test_issue_report_shows_receiver_after_dispense():
     assert 'id="ir_receiver"' in HTML and 'id="ir_receivedAt"' in HTML
     assert "fillReceivedBy(a)" in HTML
+
+
+def test_issue_report_prints_after_dispense():
+    submit = HTML.split("async function submitDispense(){", 1)[1].split("\nfunction ", 1)[0]
+    assert "printRequestIssueReport(g.no)" in submit
+    fn = HTML.split("function printRequestIssueReport(no){", 1)[1].split("\nfunction ", 1)[0]
+    assert "loadRequestIntoForm(g)" in fn and "printIssueReport(isEmergencyRequest())" in fn

@@ -1094,10 +1094,8 @@ function requestsView(){const all=requestGroups(),q=($('reqSearch')?.value||'').
   if($('reqCount'))$('reqCount').textContent=all.length?`Showing ${f.length} of ${all.length} requests`:'';
   $('requestsList').innerHTML=f.length?'<div class="table-wrap"><table class="hist"><tr><th>Request No.</th><th>Date / Time</th><th>Patient</th><th>File</th><th>Type</th><th>Units</th><th>Technologist</th><th></th></tr>'+f.map(g=>{const x=g.first,t=x.releaseType||'ROUTINE';return `<tr><td style="white-space:nowrap"><b>${escHtml(g.no)}</b></td><td style="white-space:nowrap">${escHtml(g.time||'—')}</td><td>${escHtml(x.name||'—')}</td><td>${escHtml(x.file||'—')}</td><td><span class="badge ${t==='EMERGENCY'?'warn':'info'}">${t==='EMERGENCY'?'Emergency':'Routine'}</span></td><td>${g.recs.length} × ${escHtml([...new Set(g.recs.map(r=>r.comp||'—'))].join(', '))}</td><td>${escHtml(x.tech||'—')}</td><td><button type="button" onclick="openRequest('${escHtml(g.no)}')">Open</button></td></tr>`}).join('')+'</table></div>':'<div class="empty-state">'+(all.length?'No matching requests.':'No requests yet. Requests appear here after you generate a tag.')+'</div>'}
 var viewingRequest=false;
-function openRequest(no){
-  const g=requestGroups().find(x=>x.no===no);if(!g){alert('Request '+no+' was not found.');return}
-  if(currentRequestNo()!==no&&requestHasUnsavedEntries()&&!confirm('The tag you are creating has entries that have not been generated yet. Open request '+no+' and clear them?'))return;
-  const x=g.first,val=(v,d)=>v&&v!=='—'?v:d;
+function loadRequestIntoForm(g){
+  const no=g.no,x=g.first,val=(v,d)=>v&&v!=='—'?v:d;
   viewingRequest=true;
   $('file').value=val(x.file,'UNKNOWN');$('name').value=val(x.name,'UNKNOWN');$('age').value=val(x.age,'');$('sex').value=val(x.sex,'UNKNOWN');
   $('pg').value=val(x.pg,'UNKNOWN');$('loc').value=val(x.loc,'ER');$('tech').value=val(x.tech,'');$('releaseType').value=x.releaseType||'ROUTINE';
@@ -1105,6 +1103,18 @@ function openRequest(no){
   setIssueUnits(g.recs.map(r=>({unit:r.unit,comp:r.comp||'—',dg:r.dg||'—',exp:r.exp||'—',status:r.status||'—',dt:r.time||''})));
   localStorage.setItem('currentRequestNo',no);localStorage.setItem('currentRequestNoSource','server');
   renderRequestNo();updateReleaseBadge();updateUnitProgress();renderReviewSummary();issueReportView();
+}
+function printRequestIssueReport(no){
+  const g=requestGroups().find(x=>x.no===no);if(!g){alert('Request '+no+' was not found.');return}
+  if(currentRequestNo()!==no&&requestHasUnsavedEntries()&&!confirm('The tag you are creating has entries that have not been generated yet. Print the issue report for '+no+' and clear them?'))return;
+  loadRequestIntoForm(g);
+  printIssueReport(isEmergencyRequest());
+}
+function openRequest(no){
+  const g=requestGroups().find(x=>x.no===no);if(!g){alert('Request '+no+' was not found.');return}
+  if(currentRequestNo()!==no&&requestHasUnsavedEntries()&&!confirm('The tag you are creating has entries that have not been generated yet. Open request '+no+' and clear them?'))return;
+  loadRequestIntoForm(g);
+  const x=g.first,val=(v,d)=>v&&v!=='—'?v:d;
   $('rdNo').textContent=no;
   const t=x.releaseType||'ROUTINE';
   $('rdSummary').innerHTML=[['Date / Time',g.time||'—'],['Release Type',t==='EMERGENCY'?'Emergency':'Routine'],['Patient',x.name],['File Number',x.file],['Age / Sex',(val(x.age,'—'))+' / '+(val(x.sex,'—'))],['Patient Blood Group',val(x.pg,'Not recorded')],['Location',x.loc],['Technologist',x.tech],['Doctor',(val(x.doctorName,'—'))+' / '+(val(x.doctorId,'—'))],['Call Received',x.callTime]].map(([k,v])=>`<div class="kv"><span>${k}</span><b>${escHtml(v||'—')}</b></div>`).join('');
@@ -1181,8 +1191,9 @@ async function submitDispense(){
     records.filter(r=>!rejected.includes(r.unit)).forEach(r=>addAudit('UNIT_DISPENSED',{requestNo:r.requestNo,unit:r.unit,releaseType:r.releaseType,details:'Dispensed to '+r.receivedBy+(r.receivedId?' ('+r.receivedId+')':'')+' for '+r.destination}));
     closeDispenseForm();issueReportView();
     $('dspMsg').className='dsp-msg'+(rejected.length?' error':'');
-    $('dspMsg').textContent=(d.accepted?`✓ ${d.accepted} unit${d.accepted>1?'s':''} from ${g.no} dispensed to ${receivedBy}.`:'')+(rejected.length?' Already dispensed earlier: '+rejected.join(', ')+'.':'');
+    $('dspMsg').innerHTML=escHtml((d.accepted?`✓ ${d.accepted} unit${d.accepted>1?'s':''} from ${g.no} dispensed to ${receivedBy}.`:'')+(rejected.length?' Already dispensed earlier: '+rejected.join(', ')+'.':''))+` <button type="button" class="secondary" onclick="printRequestIssueReport('${escHtml(g.no)}')">Print Issue Report Again</button>`;
     dispenseView();
+    if(d.accepted)printRequestIssueReport(g.no);
   }catch(e){
     setFieldError('dspChecks','Could not save the dispensation: '+e.message);
   }finally{btn.disabled=false;btn.textContent='Confirm Dispense'}
