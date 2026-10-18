@@ -36,6 +36,7 @@ SESSIONS_FILE = DATA_DIR / "sessions.json"
 HISTORY_FILE = DATA_DIR / "history.json"
 AUDIT_FILE = DATA_DIR / "audit.json"
 REQUEST_COUNTER_FILE = DATA_DIR / "request_counter.json"
+DISPENSE_FILE = DATA_DIR / "dispense.json"
 
 DEFAULT_ADMIN_USER = os.environ.get("BLOOD_ADMIN_USER", "admin")
 DEFAULT_ADMIN_PASS = os.environ.get("BLOOD_ADMIN_PASSWORD", "admin123")
@@ -430,6 +431,43 @@ def next_request_number(
         counters = dict(sorted(counters.items())[-14:])
         _write_json(REQUEST_COUNTER_FILE, counters)
     return {"requestNo": f"{body.prefix}{seq:03d}"}
+
+
+def _dispense_key(r: dict[str, Any]) -> str:
+    return f"{r.get('requestNo', '')}|{r.get('unit', '')}"
+
+
+@app.get("/api/dispense")
+def get_dispense(_: dict[str, Any] = Depends(current_user)) -> dict[str, Any]:
+    with _lock:
+        records = _read_json(DISPENSE_FILE, [])
+        return {"records": records if isinstance(records, list) else []}
+
+
+@app.post("/api/dispense")
+def add_dispense(
+    body: BulkRequest, user: dict[str, Any] = Depends(current_user)
+) -> dict[str, Any]:
+    """Record dispensed units. A unit within a request can only be dispensed once."""
+    with _lock:
+        existing = _read_json(DISPENSE_FILE, [])
+        if not isinstance(existing, list):
+            existing = []
+        taken = {_dispense_key(r) for r in existing if isinstance(r, dict)}
+        accepted: list[dict[str, Any]] = []
+        rejected: list[str] = []
+        for r in body.records or []:
+            if not isinstance(r, dict) or not r.get("unit") or not r.get("requestNo"):
+                continue
+            k = _dispense_key(r)
+            if k in taken:
+                rejected.append(str(r.get("unit")))
+                continue
+            taken.add(k)
+            accepted.append({**r, "recordedBy": user.get("username", "")})
+        merged = (accepted + existing)[:5000]
+        _write_json(DISPENSE_FILE, merged)
+        return {"records": merged, "accepted": len(accepted), "rejected": rejected}
 
 
 @app.get("/api/audit")

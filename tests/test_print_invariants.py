@@ -63,7 +63,7 @@ def test_homepage_hero_and_three_cards():
 
 
 def test_nav_items_and_admin_gate():
-    for label in ["Home", "Create Tag", "Requests", "Tag Preview", "Issue Report", "History", "Admin"]:
+    for label in ["Home", "Create Tag", "Requests", "Dispense", "Tag Preview", "Issue Report", "History", "Admin"]:
         assert f"<span>{label}</span>" in HTML
     assert "<span>Audit Trail</span>" not in HTML
     assert 'id="usersNav"' in HTML and 'style="display:none"' in HTML
@@ -120,3 +120,10 @@ def test_single_issue_report_button_follows_release_type():
     assert "printIssueFromCenter(false)" not in HTML and "printIssueFromCenter(true)" not in HTML
     assert HTML.count("printIssueReport(isEmergencyRequest())") == 2
     assert "function syncIssueReportType" in HTML
+
+
+def test_dispense_page_requires_receiver_and_checks():
+    assert '<section id="dispense" class="page">' in HTML
+    submit = HTML.split("async function submitDispense(){", 1)[1].split("\nfunction ", 1)[0]
+    assert "dspChkId" in submit and "dspChkInspect" in submit and "receivedBy" in submit
+    assert "/api/dispense" in submit

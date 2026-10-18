@@ -96,3 +96,16 @@ def test_request_numbers_are_daily_sequence(client):
     assert client.post("/api/request-number", json={"prefix": "261017"}, headers=admin_headers).json()["requestNo"] == "261017001"
     assert client.post("/api/request-number", json={"prefix": "2610"}, headers=admin_headers).status_code == 422
     assert client.post("/api/request-number", json={"prefix": "261016"}).status_code == 401
+
+
+def test_dispense_once_per_unit(client):
+    tok = client.post("/api/login", json={"username": "admin", "password": "admin123"}).json()["session_token"]
+    h = {"Authorization": f"Bearer {tok}"}
+    rec = {"requestNo": "261018001", "unit": "W1", "receivedBy": "Nurse A", "dispensedAt": "2026-10-18 02:40"}
+    r1 = client.post("/api/dispense", json={"records": [rec]}, headers=h).json()
+    assert r1["accepted"] == 1 and r1["rejected"] == []
+    assert r1["records"][0]["recordedBy"] == "admin"
+    r2 = client.post("/api/dispense", json={"records": [rec, {**rec, "unit": "W2"}]}, headers=h).json()
+    assert r2["accepted"] == 1 and r2["rejected"] == ["W1"]
+    assert len(client.get("/api/dispense", headers=h).json()["records"]) == 2
+    assert client.get("/api/dispense").status_code == 401
